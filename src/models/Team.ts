@@ -1,10 +1,13 @@
 import { Schema, model, models } from 'mongoose';
-import { ITeam } from '@/types';
+import { ITeam } from '@/features/teams/types';
 
-const teamSchema = new Schema<ITeam>({
-  name: { type: String, required: true, unique: true, trim: true },
-  score: { type: Number, required: true, default: 0 },
-  badge: { type: String },
-});
+const teamSchema = new Schema<ITeam>(
+  {
+    name: { type: String, required: true, unique: true, trim: true },
+    score: { type: Number, required: true, default: 0 },
+    badge: { type: String },
+  },
+  { timestamps: true }
+);
 
 export default models.Team || model<ITeam>('Team', teamSchema);
