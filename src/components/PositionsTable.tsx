@@ -98,7 +98,7 @@ const PositionsTable: React.FC<PositionsTableProps> = ({ teams }) => {
         margin: 'auto',
         mt: 4,
         p: isMobile ? 1 : 2,
-        overflowX: 'auto'
+        overflowX: 'auto',
       }}
     >
       <Typography variant='h4' align='center' sx={{ mb: 2 }}>

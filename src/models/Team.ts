@@ -1,7 +1,7 @@
 import { Schema, model, models } from 'mongoose';
 import { ITeam } from '@/features/teams/types';
 
-const teamSchema = new Schema<ITeam>(
+export const teamSchema = new Schema(
   {
     name: { type: String, required: true, unique: true, trim: true },
     score: { type: Number, required: true, default: 0 },
