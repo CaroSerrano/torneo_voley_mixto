@@ -7,7 +7,7 @@ import { Mail } from '@mui/icons-material';
 
 const Footer = () => {
   return (
-    <Box component='footer' sx={{ backgroundColor: '#f5f5f5', py: 3, mt: 5 }}>
+    <Box component='footer' sx={{ backgroundColor: '#f5f5f5', py: 3, mt: 'auto' }}>
       <Container
         maxWidth='lg'
         sx={{
@@ -28,8 +28,7 @@ const Footer = () => {
           color='inherit'
           sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mr: 3 }}
         >
-          <Mail />
-          <Typography variant='body2'>Email</Typography>
+          <Mail fontSize='large'/>
         </MuiLink>
         <MuiLink
           href='https://www.linkedin.com/in/paula-carolina-serrano'
@@ -38,8 +37,7 @@ const Footer = () => {
           color='inherit'
           sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
         >
-          <LinkedInIcon />
-          <Typography variant='body2'>LinkedIn</Typography>
+          <LinkedInIcon fontSize='large' />
         </MuiLink>
         </div>
       </Container>

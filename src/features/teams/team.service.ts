@@ -2,6 +2,7 @@ import { connectDB } from '@/utils/mongoose';
 import Team from '@/models/Team';
 import { ReturnedTeam } from '@/features/teams/types';
 import { CreateTeamData, UpdateTeamData } from '@/features/teams/validations';
+import { Match } from '@/models/Match';
 
 export async function loadTeams(): Promise<ReturnedTeam[]> {
   await connectDB();
@@ -17,6 +18,12 @@ export async function addTeam(teamData: CreateTeamData): Promise<ReturnedTeam> {
 
 export async function deleteTeam(teamId: string): Promise<ReturnedTeam> {
   await connectDB();
+  const teamMatches = await Match.find({
+    $or: [{ teamA: teamId }, { teamB: teamId }],
+  });
+  const matchIds = teamMatches.map((match) => match._id);
+
+  await Match.deleteMany({ _id: { $in: matchIds } });
   const deletedTeam = await Team.findByIdAndDelete(teamId);
   return deletedTeam;
 }

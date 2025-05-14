@@ -2,8 +2,11 @@
 // import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
-import { ThemeProvider, CssBaseline } from '@mui/material';
+import { ThemeProvider, CssBaseline, Box } from '@mui/material';
 import theme from '@/theme';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import { SessionProvider } from 'next-auth/react';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -26,14 +29,31 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='en'>
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <AppRouterCacheProvider>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            {children}
-          </ThemeProvider>
-        </AppRouterCacheProvider>
+    <html lang='en' style={{ height: '100%' }}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable}`}
+        style={{ height: '100%', margin: 0 }}
+      >
+        <SessionProvider>
+          <AppRouterCacheProvider>
+            <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  minHeight: '100vh',
+                }}
+              >
+                <Navbar />
+                <Box component='main' sx={{ flexGrow: 1 }}>
+                  {children}
+                </Box>
+                <Footer />
+              </Box>
+            </ThemeProvider>
+          </AppRouterCacheProvider>
+        </SessionProvider>
       </body>
     </html>
   );

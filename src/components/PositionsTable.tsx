@@ -16,8 +16,17 @@ import {
   Typography,
   Avatar,
   useMediaQuery,
-  useTheme
+  useTheme,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
 } from '@mui/material';
+import { useSession } from 'next-auth/react'; // ✅ para saber si hay sesión
+import EditIcon from '@mui/icons-material/Edit'; // ✅ ícono de edición
+import DeleteIcon from '@mui/icons-material/Delete'; // ✅ ícono de eliminado
+import IconButton from '@mui/material/IconButton'; // ✅ botón icónico
 
 interface Team {
   _id: string;
@@ -28,16 +37,22 @@ interface Team {
 
 interface PositionsTableProps {
   teams: Team[];
+  refreshTeams: () => void;
+  refreshMatches: () => void;
 }
 
 type Order = 'asc' | 'desc';
 
-const PositionsTable: React.FC<PositionsTableProps> = ({ teams }) => {
+const PositionsTable: React.FC<PositionsTableProps> = ({ teams, refreshTeams, refreshMatches }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [order, setOrder] = useState<Order>('desc');
   const [orderBy, setOrderBy] = useState<keyof Team>('score');
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [open, setOpen] = useState(false);
+  const [idToFetch, setIdToFetch] = useState<string | null>(null);
+  const { data: session } = useSession(); // ✅
+  const isLoggedIn = !!session; // ✅ true si hay sesión
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -62,6 +77,35 @@ const PositionsTable: React.FC<PositionsTableProps> = ({ teams }) => {
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+  };
+
+  const handleEdit = (id: string) => {
+    console.log('Editar equipo', id);
+    // Acá iría la lógica de abrir modal o redirigir
+  };
+
+  const handleDelete = (id: string) => {
+    setIdToFetch(id);
+    setOpen(true);
+  };
+  const confirmDelete = async () => {
+    if (idToFetch) {
+      console.log('Eliminar equipo', idToFetch);
+      const res = await fetch(`/api/teams/${idToFetch}`, {
+        method: 'DELETE'
+      })
+      if(res.ok){
+        refreshTeams();
+        refreshMatches();
+      }
+    }
+    setOpen(false);
+    setIdToFetch(null);
+  };
+
+  const cancelDelete = () => {
+    setOpen(false);
+    setIdToFetch(null);
   };
 
   const filteredTeams = teams.filter((team) =>
@@ -139,6 +183,11 @@ const PositionsTable: React.FC<PositionsTableProps> = ({ teams }) => {
                 <strong>Puntaje</strong>
               </TableSortLabel>
             </TableCell>
+            {isLoggedIn && (
+              <TableCell>
+                <strong>Acciones</strong>
+              </TableCell>
+            )}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -158,6 +207,19 @@ const PositionsTable: React.FC<PositionsTableProps> = ({ teams }) => {
                 </Box>
               </TableCell>
               <TableCell>{team.score}</TableCell>
+              {isLoggedIn && (
+                <TableCell>
+                  <IconButton onClick={() => handleEdit(team._id)} size='small'>
+                    <EditIcon fontSize='small' />
+                  </IconButton>
+                  <IconButton
+                    onClick={() => handleDelete(team._id)}
+                    size='small'
+                  >
+                    <DeleteIcon fontSize='small' />
+                  </IconButton>
+                </TableCell>
+              )}
             </TableRow>
           ))}
           {paginatedTeams.length === 0 && (
@@ -181,8 +243,21 @@ const PositionsTable: React.FC<PositionsTableProps> = ({ teams }) => {
           rowsPerPage={rowsPerPage}
           onRowsPerPageChange={handleChangeRowsPerPage}
           rowsPerPageOptions={[5, 10, 25]}
+          labelRowsPerPage='Filas por página'
         />
       </Box>
+      <Dialog open={open} onClose={cancelDelete}>
+        <DialogTitle>¿Estás seguro?</DialogTitle>
+        <DialogContent>
+          Esta acción eliminará el equipo permanentemente.
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={cancelDelete}>Cancelar</Button>
+          <Button onClick={confirmDelete} color='error' variant='contained'>
+            Eliminar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </TableContainer>
   );
 };

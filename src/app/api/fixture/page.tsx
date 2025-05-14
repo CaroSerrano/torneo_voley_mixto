@@ -1,16 +1,15 @@
-import React from 'react';
+'use client';
 import Fixture from '@/components/Fixture';
-
-async function getMatches() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/matches`, {
-    next: { revalidate: 60 }, // opcional, ISR
-  });
-
-  if (!res.ok) throw new Error('Error al cargar los partidos');
-  return res.json();
+import { ReturnedMatch } from '@/features/matches/types';
+interface FixturePageProps {
+  matches: ReturnedMatch[];
+  refreshMatches: () => void;
 }
+const FixturePage: React.FC<FixturePageProps> = ({
+  matches,
+  refreshMatches,
+}) => {
+  return <Fixture matches={matches} refreshMatches={refreshMatches} />;
+};
 
-export default async function FixturePage() {
-  const matches = await getMatches();
-  return <Fixture matches={matches} />;
-}
+export default FixturePage;

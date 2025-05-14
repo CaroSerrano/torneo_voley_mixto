@@ -1,21 +1,43 @@
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+'use client'
+
 import PositionsPage from './api/positions/page';
 import FixturePage from './api/fixture/page';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
+  const [teams, setTeams] = useState([]);
+  const [matches, setMatches] = useState([]);
+
+  const fetchTeams = async () => {
+    const res = await fetch('/api/teams');
+    const data = await res.json();
+    setTeams(data);
+  };
+
+  const fetchMatches = async () => {
+    const res = await fetch('/api/matches');
+    const data = await res.json();
+    setMatches(data);
+  };
+
+  useEffect(() => {
+    fetchTeams();
+    fetchMatches();
+  }, []);
   return (
     <div>
-      <Navbar />
       <main style={{ paddingTop: '80px' }}>
         <section id='positions'>
-          <PositionsPage />
+          <PositionsPage
+            teams={teams}
+            refreshMatches={fetchMatches}
+            refreshTeams={fetchTeams}
+          />
         </section>
         <section id='fixture'>
-          <FixturePage />
+          <FixturePage matches={matches} refreshMatches={fetchMatches} />
         </section>
       </main>
-      <Footer />
     </div>
   );
 }
