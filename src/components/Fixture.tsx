@@ -1,7 +1,7 @@
 'use client';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
-import { ITeam } from '@/features/teams/types';
+import { ITeam, ReturnedTeam } from '@/features/teams/types';
 import { ReturnedMatch } from '@/features/matches/types';
 import {
   Card,
@@ -15,48 +15,62 @@ import {
   DialogContent,
   DialogActions,
   Button,
+  Alert,
 } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit'; // ✅ ícono de edición
-import DeleteIcon from '@mui/icons-material/Delete'; // ✅ ícono de eliminado
-import IconButton from '@mui/material/IconButton'; // ✅ botón icónico
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import IconButton from '@mui/material/IconButton';
+import AddMatchForm from './AddMatchForm';
 
 interface FixtureProps {
+  teams: ReturnedTeam[];
   matches: ReturnedMatch[];
   refreshMatches: () => void;
 }
 
-const Fixture: React.FC<FixtureProps> = ({ matches, refreshMatches }) => {
+const Fixture: React.FC<FixtureProps> = ({
+  matches,
+  teams,
+  refreshMatches,
+}) => {
   const { data: session } = useSession();
   const isLoggedIn = !!session; // ✅ true si hay sesión
   const [open, setOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [updateModalOpen, setUpdateModalOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [idToFetch, setIdToFetch] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
 
   const handleEdit = (id: string) => {
     console.log('Editar equipo', id);
-    // Acá iría la lógica de abrir modal o redirigir
+    setIdToFetch(id);
+    setUpdateModalOpen(true);
   };
 
   const handleDelete = async (id: string) => {
-    const res = await fetch(`/api/matches/${id}`, {
-      method: 'DELETE',
-    });
-
-    if (res.ok) {
-      refreshMatches();
-    } else {
-      alert('Error al eliminar el partido');
-    }
+    setOpen(true);
+    setIdToFetch(id);
   };
 
   const confirmDelete = async () => {
     if (idToFetch) {
-      console.log('Eliminar partido', idToFetch);
-      await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/matches/${idToFetch}`,
-        {
+      try {
+        const res = await fetch(`/api/matches/${idToFetch}`, {
           method: 'DELETE',
+        });
+
+        if (res.ok) {
+          refreshMatches();
         }
-      );
+      } catch (error) {
+        if (error instanceof Error) {
+          setError(error.message);
+          setTimeout(() => {
+            setError(null);
+          }, 3000);
+        }
+      }
     }
     setOpen(false);
     setIdToFetch(null);
@@ -66,16 +80,41 @@ const Fixture: React.FC<FixtureProps> = ({ matches, refreshMatches }) => {
     setOpen(false);
     setIdToFetch(null);
   };
+
+  const cancelUpdate = () => {
+    setUpdateModalOpen(false);
+    setIdToFetch(null);
+  };
+
+  const cancelAddMatch = () => {
+    setModalOpen(false);
+    setIdToFetch(null);
+  };
+
   return (
     <Box sx={{ p: 2, mb: 5 }}>
-      <Typography
-        variant='h4'
-        gutterBottom
-        align='center'
-        color='primary.contrastText'
-      >
-        Fixture
-      </Typography>
+      {error && <Alert severity='error'>{error}</Alert>}
+      {message && <Alert severity='success'>{message}</Alert>}
+      <Box sx={{ justifyItems: 'center' }}>
+        <Typography
+          variant='h4'
+          gutterBottom
+          align='center'
+          color='primary.contrastText'
+        >
+          Fixture
+        </Typography>
+        {isLoggedIn && (
+          <Button
+            color='secondary'
+            variant='contained'
+            sx={{ color: 'secondary.contrastText', my: 2 }}
+            onClick={() => setModalOpen(true)}
+          >
+            Agregar partido
+          </Button>
+        )}
+      </Box>
       {matches.length === 0 && (
         <Typography variant='h6' align='center' color='primary.contrastText'>
           Aún no hay partidos
@@ -155,6 +194,21 @@ const Fixture: React.FC<FixtureProps> = ({ matches, refreshMatches }) => {
             Eliminar
           </Button>
         </DialogActions>
+      </Dialog>
+      <Dialog open={modalOpen} onClose={cancelAddMatch}>
+        <DialogTitle>Añadir partido</DialogTitle>
+        <DialogContent>
+          <AddMatchForm
+            teams={teams}
+            cancelAddMatch={cancelAddMatch}
+            refreshMatches={refreshMatches}
+            setMessage={setMessage}
+          />
+        </DialogContent>
+      </Dialog>
+      <Dialog open={updateModalOpen} onClose={cancelUpdate}>
+        <DialogTitle>Actualizar partido</DialogTitle>
+        <DialogContent>Formulario</DialogContent>
       </Dialog>
     </Box>
   );

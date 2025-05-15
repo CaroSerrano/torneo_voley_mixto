@@ -35,7 +35,7 @@ export default function Home() {
           />
         </section>
         <section id='fixture'>
-          <FixturePage matches={matches} refreshMatches={fetchMatches} />
+          <FixturePage matches={matches} teams={teams} refreshMatches={fetchMatches} />
         </section>
       </main>
     </div>

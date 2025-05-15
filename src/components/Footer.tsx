@@ -3,7 +3,7 @@
 import React from 'react';
 import { Box, Typography, Container, Link as MuiLink } from '@mui/material';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
-import { Mail } from '@mui/icons-material';
+// import { Mail } from '@mui/icons-material';
 
 const Footer = () => {
   return (
@@ -21,7 +21,7 @@ const Footer = () => {
            &copy; {new Date().getFullYear()} Desarrollado por Caro Serrano
         </Typography>
         <div style={{display: 'flex', justifyContent: 'end'}}>
-        <MuiLink
+        {/* <MuiLink
           href='https://www.linkedin.com/in/paula-carolina-serrano'
           target='_blank'
           rel='noopener noreferrer'
@@ -29,7 +29,7 @@ const Footer = () => {
           sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mr: 3 }}
         >
           <Mail fontSize='large'/>
-        </MuiLink>
+        </MuiLink> */}
         <MuiLink
           href='https://www.linkedin.com/in/paula-carolina-serrano'
           target='_blank'

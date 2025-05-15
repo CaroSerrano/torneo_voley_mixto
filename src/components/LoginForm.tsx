@@ -32,16 +32,20 @@ const LoginForm: React.FC = () => {
   const router = useRouter();
 
   const onSubmit = async (data: FormData) => {
-    const res = await signIn('credentials', {
-      redirect: false,
-      email: data.email,
-      password: data.password,
-    });
+    try {
+      const res = await signIn('credentials', {
+        redirect: false,
+        email: data.email,
+        password: data.password,
+      });
 
-    if (res?.ok) {
-      router.push('/');
-    } else if (res?.error) {
-      setError(res?.error);
+      if (res?.ok) {
+        router.push('/');
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+      }
     }
   };
 

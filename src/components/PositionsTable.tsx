@@ -22,17 +22,21 @@ import {
   DialogContent,
   DialogActions,
   Button,
+  Alert,
 } from '@mui/material';
-import { useSession } from 'next-auth/react'; // ✅ para saber si hay sesión
-import EditIcon from '@mui/icons-material/Edit'; // ✅ ícono de edición
-import DeleteIcon from '@mui/icons-material/Delete'; // ✅ ícono de eliminado
-import IconButton from '@mui/material/IconButton'; // ✅ botón icónico
+import { useSession } from 'next-auth/react';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import IconButton from '@mui/material/IconButton';
+import UpdateTeamForm from './UpdateTeamForm';
 
 interface Team {
   _id: string;
   name: string;
   badge?: string;
   score: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface PositionsTableProps {
@@ -43,14 +47,21 @@ interface PositionsTableProps {
 
 type Order = 'asc' | 'desc';
 
-const PositionsTable: React.FC<PositionsTableProps> = ({ teams, refreshTeams, refreshMatches }) => {
+const PositionsTable: React.FC<PositionsTableProps> = ({
+  teams,
+  refreshTeams,
+  refreshMatches,
+}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [order, setOrder] = useState<Order>('desc');
   const [orderBy, setOrderBy] = useState<keyof Team>('score');
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [open, setOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
   const [idToFetch, setIdToFetch] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
   const { data: session } = useSession(); // ✅
   const isLoggedIn = !!session; // ✅ true si hay sesión
 
@@ -79,9 +90,8 @@ const PositionsTable: React.FC<PositionsTableProps> = ({ teams, refreshTeams, re
     setPage(0);
   };
 
-  const handleEdit = (id: string) => {
-    console.log('Editar equipo', id);
-    // Acá iría la lógica de abrir modal o redirigir
+  const handleEdit = () => {
+    setModalOpen(true);
   };
 
   const handleDelete = (id: string) => {
@@ -90,13 +100,19 @@ const PositionsTable: React.FC<PositionsTableProps> = ({ teams, refreshTeams, re
   };
   const confirmDelete = async () => {
     if (idToFetch) {
-      console.log('Eliminar equipo', idToFetch);
-      const res = await fetch(`/api/teams/${idToFetch}`, {
-        method: 'DELETE'
-      })
-      if(res.ok){
-        refreshTeams();
-        refreshMatches();
+      try {
+        console.log('Eliminar equipo', idToFetch);
+        const res = await fetch(`/api/teams/${idToFetch}`, {
+          method: 'DELETE',
+        });
+        if (res.ok) {
+          refreshTeams();
+          refreshMatches();
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          setError(error.message);
+        }
       }
     }
     setOpen(false);
@@ -134,6 +150,10 @@ const PositionsTable: React.FC<PositionsTableProps> = ({ teams, refreshTeams, re
     page * rowsPerPage + rowsPerPage
   );
 
+  const cancelUpdate = () => {
+    setModalOpen(false);
+  };
+
   return (
     <TableContainer
       component={Paper}
@@ -148,6 +168,8 @@ const PositionsTable: React.FC<PositionsTableProps> = ({ teams, refreshTeams, re
       <Typography variant='h4' align='center' sx={{ mb: 2 }}>
         Tabla de Posiciones
       </Typography>
+      {error && <Alert severity='error'>{error}</Alert>}
+      {message && <Alert severity='success'>{message}</Alert>}
 
       <TextField
         label='Buscar equipo'
@@ -209,7 +231,7 @@ const PositionsTable: React.FC<PositionsTableProps> = ({ teams, refreshTeams, re
               <TableCell>{team.score}</TableCell>
               {isLoggedIn && (
                 <TableCell>
-                  <IconButton onClick={() => handleEdit(team._id)} size='small'>
+                  <IconButton onClick={() => handleEdit()} size='small'>
                     <EditIcon fontSize='small' />
                   </IconButton>
                   <IconButton
@@ -220,6 +242,15 @@ const PositionsTable: React.FC<PositionsTableProps> = ({ teams, refreshTeams, re
                   </IconButton>
                 </TableCell>
               )}
+              <Dialog open={modalOpen} onClose={cancelUpdate}>
+                <DialogTitle>Actualizar equipo</DialogTitle>
+                <UpdateTeamForm
+                  team={team}
+                  cancelUpdate={cancelUpdate}
+                  refreshTeams={refreshTeams}
+                  setMessage={setMessage}
+                />
+              </Dialog>
             </TableRow>
           ))}
           {paginatedTeams.length === 0 && (
