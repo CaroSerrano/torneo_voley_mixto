@@ -1,0 +1,15 @@
+import { z } from 'zod';
+import { Tournament } from './types';
+
+export const createChampionDataDto = z.object({
+  team: z.string().min(1),
+  tournament: z.nativeEnum(Tournament),
+  year: z.number().min(1900).max(new Date().getFullYear()),
+});
+
+export type CreateChampionData = z.infer<typeof createChampionDataDto>;
+
+export const updateChampionDataDto = createChampionDataDto
+  .partial();
+
+export type UpdateChampionData = z.infer<typeof updateChampionDataDto>;
