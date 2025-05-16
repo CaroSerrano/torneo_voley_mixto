@@ -52,7 +52,7 @@ const LoginForm: React.FC = () => {
   return (
     <Paper elevation={3} sx={{ maxWidth: 400, mx: 'auto', mt: 20, p: 4 }}>
       {error && <Alert severity='error'>{error}</Alert>}
-      <Typography variant='h5' component='h1' gutterBottom align='center'>
+      <Typography variant='h5' color='primary' component='h1' gutterBottom align='center'>
         Iniciar Sesión
       </Typography>
 
@@ -61,6 +61,7 @@ const LoginForm: React.FC = () => {
           label='Email'
           fullWidth
           margin='normal'
+          sx={{input: {color: 'black'}}}
           {...register('email', {
             required: 'El email es obligatorio',
             pattern: {
@@ -77,33 +78,32 @@ const LoginForm: React.FC = () => {
           type={showPassword ? 'text' : 'password'}
           fullWidth
           margin='normal'
+          sx={{input: {color: 'black'}}}
           {...register('password', {
             required: 'La contraseña es obligatoria',
-            minLength: {
-              value: 6,
-              message: 'La contraseña debe tener al menos 6 caracteres',
-            },
           })}
           error={!!errors.password}
           helperText={errors.password?.message}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position='end'>
-                <IconButton
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  edge='end'
-                >
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            ),
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position='end'>
+                  <IconButton
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    edge='end'
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
           }}
         />
 
         <Button
           type='submit'
           variant='contained'
-          color='primary'
+          color='secondary'
           fullWidth
           sx={{ mt: 2 }}
         >

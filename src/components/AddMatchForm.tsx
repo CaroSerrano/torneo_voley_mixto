@@ -4,6 +4,8 @@ import {
   Alert,
   Box,
   Button,
+  CircularProgress,
+  Container,
   DialogActions,
   DialogContent,
   InputLabel,
@@ -15,7 +17,6 @@ import { ReturnedTeam } from '@/features/teams/types';
 
 interface AddMatchFormProps {
   cancelAddMatch: () => void;
-  refreshMatches: () => void;
   setMessage: (message: string | null) => void;
   teams: ReturnedTeam[];
 }
@@ -30,7 +31,6 @@ interface FormData {
 
 const AddMatchForm: React.FC<AddMatchFormProps> = ({
   cancelAddMatch,
-  refreshMatches,
   setMessage,
   teams,
 }) => {
@@ -42,10 +42,12 @@ const AddMatchForm: React.FC<AddMatchFormProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [teamA, setTeamA] = useState<string>('');
   const [teamB, setTeamB] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const onSubmit = async (data: FormData) => {
     console.log(data);
     try {
+      setIsLoading(true);
       const res = await fetch(`/api/matches`, {
         method: 'POST',
         body: JSON.stringify(data),
@@ -56,8 +58,8 @@ const AddMatchForm: React.FC<AddMatchFormProps> = ({
       const jsonData = await res.json();
       console.log(jsonData);
       if (res.ok) {
-        setMessage('aArtido agregado correctamente');
-        refreshMatches();
+        setIsLoading(false);
+        setMessage('Partido agregado correctamente');
         setTimeout(() => {
           setMessage(null);
         }, 3000);
@@ -74,8 +76,11 @@ const AddMatchForm: React.FC<AddMatchFormProps> = ({
   };
 
   return (
-    <DialogContent>
-      {error && <Alert severity='error'>{error}</Alert>}
+    <DialogContent sx={{ bgcolor: '#00313e' }}>
+      <Container sx={{ display: 'flex', justifyContent: 'center' }}>
+        {error && <Alert severity='error'>{error}</Alert>}
+        {isLoading && <CircularProgress color='secondary' />}
+      </Container>
       <Box component='form' onSubmit={handleSubmit(onSubmit)} noValidate>
         <InputLabel id='teamA-select-label'>Equipo A</InputLabel>
         <Select
@@ -120,7 +125,13 @@ const AddMatchForm: React.FC<AddMatchFormProps> = ({
         />
 
         <DialogActions>
-          <Button onClick={cancelAddMatch}>Cancelar</Button>
+          <Button
+            onClick={cancelAddMatch}
+            color='secondary'
+            variant='contained'
+          >
+            Cancelar
+          </Button>
           <Button type='submit' color='success' variant='contained'>
             Añadir
           </Button>

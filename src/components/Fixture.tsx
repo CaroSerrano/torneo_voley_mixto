@@ -1,7 +1,7 @@
 'use client';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
-import { ITeam, ReturnedTeam } from '@/features/teams/types';
+import { ITeam } from '@/features/teams/types';
 import { ReturnedMatch } from '@/features/matches/types';
 import {
   Card,
@@ -16,31 +16,27 @@ import {
   DialogActions,
   Button,
   Alert,
+  CircularProgress,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
 import AddMatchForm from './AddMatchForm';
+import UpdateMatchForm from './UpdateMatchForm';
+import useMatches from '@/hooks/useMatches';
+import useTeams from '@/hooks/useTeams';
 
-interface FixtureProps {
-  teams: ReturnedTeam[];
-  matches: ReturnedMatch[];
-  refreshMatches: () => void;
-}
-
-const Fixture: React.FC<FixtureProps> = ({
-  matches,
-  teams,
-  refreshMatches,
-}) => {
+const Fixture: React.FC = () => {
   const { data: session } = useSession();
-  const isLoggedIn = !!session; // ✅ true si hay sesión
+  const isLoggedIn = !!session;
   const [open, setOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [idToFetch, setIdToFetch] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const { matches, isLoadingMatches, isErrorMatches } = useMatches();
+  const { teams, isLoadingTeams, isErrorTeams } = useTeams();
 
   const handleEdit = (id: string) => {
     console.log('Editar equipo', id);
@@ -56,13 +52,9 @@ const Fixture: React.FC<FixtureProps> = ({
   const confirmDelete = async () => {
     if (idToFetch) {
       try {
-        const res = await fetch(`/api/matches/${idToFetch}`, {
+        await fetch(`/api/matches/${idToFetch}`, {
           method: 'DELETE',
         });
-
-        if (res.ok) {
-          refreshMatches();
-        }
       } catch (error) {
         if (error instanceof Error) {
           setError(error.message);
@@ -90,6 +82,18 @@ const Fixture: React.FC<FixtureProps> = ({
     setModalOpen(false);
     setIdToFetch(null);
   };
+
+  if (isLoadingMatches || isLoadingTeams) {
+    return <CircularProgress color='secondary' />;
+  }
+
+  if (isErrorMatches || isErrorTeams) {
+    return <Alert severity='error'>Ocurrió un error al cargar los datos</Alert>;
+  }
+
+  if (!matches || !teams) {
+    return <Alert severity='warning'>Datos no disponibles</Alert>;
+  }
 
   return (
     <Box sx={{ p: 2, mb: 5 }}>
@@ -122,93 +126,100 @@ const Fixture: React.FC<FixtureProps> = ({
       )}
       {matches.length > 0 && (
         <Grid container spacing={2}>
-          {matches.map((match) => (
-            <Grid
-              size={{ xs: 12 }}
-              display='flex'
-              justifyContent='center'
-              key={match._id}
-            >
-              <Card
-                sx={{ width: '100%', maxWidth: 1200, position: 'relative' }}
+          {matches.map((match: ReturnedMatch) => (
+              <Grid
+                size={{ xs: 12 }}
+                display='flex'
+                justifyContent='center'
+                key={match._id}
               >
-                {isLoggedIn && (
-                  <Box
-                    sx={{ position: 'absolute', top: 8, right: 8, zIndex: 1 }}
-                  >
-                    <IconButton
-                      onClick={() => handleEdit(match._id)}
-                      size='small'
+                <Card
+                  sx={{ width: '100%', maxWidth: 1200, position: 'relative', backgroundColor:'#00313e', boxShadow: '0 4px 12px rgba(255, 255, 255, 0.1)', }}
+                >
+                  {isLoggedIn && (
+                    <Box
+                      sx={{ position: 'absolute', top: 8, right: 8, zIndex: 1 }}
                     >
-                      <EditIcon fontSize='small' />
-                    </IconButton>
-                    <IconButton
-                      onClick={() => handleDelete(match._id)}
-                      size='small'
+                      <IconButton
+                        onClick={() => handleEdit(match._id)}
+                        size='small'
+                      >
+                        <EditIcon fontSize='small' sx={{color:'#cddde2'}} />
+                      </IconButton>
+                      <IconButton
+                        onClick={() => handleDelete(match._id)}
+                        size='small'
+                      >
+                        <DeleteIcon fontSize='small' sx={{color:'#cddde2'}} />
+                      </IconButton>
+                    </Box>
+                  )}
+                  <CardContent>
+                    <Typography
+                      variant='subtitle1'
+                      gutterBottom
                     >
-                      <DeleteIcon fontSize='small' />
-                    </IconButton>
-                  </Box>
-                )}
-                <CardContent>
-                  <Typography
-                    variant='subtitle1'
-                    color='text.secondary'
-                    gutterBottom
-                  >
-                    {new Date(match.date).toLocaleString('es-AR', {
-                      weekday: 'long',
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                      hour12: false,
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
-                  </Typography>
-                  <Grid
-                    container
-                    alignItems='center'
-                    justifyContent='space-between'
-                  >
-                    <TeamDisplay team={match.teamA} />
-                    <Typography variant='h6' sx={{ mx: 2 }}>
-                      {match.teamAscore || 0} - {match.teamBscore || 0}
+                      {new Date(match.date).toLocaleString('es-AR', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour12: false,
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
                     </Typography>
-                    <TeamDisplay team={match.teamB} reverse />
-                  </Grid>
-                </CardContent>
-              </Card>
-            </Grid>
+                    <Grid
+                      container
+                      alignItems='center'
+                      justifyContent='center'
+                      sx={{ position: 'relative' }}
+                    >
+                      <Box sx={{ position: 'absolute', left: 0 }}>
+                        <TeamDisplay team={match.teamA} />
+                      </Box>
+
+                      <Typography variant='h6' sx={{ mx: 2 }}>
+                        {match.teamAscore || 0} - {match.teamBscore || 0}
+                      </Typography>
+
+                      <Box sx={{ position: 'absolute', right: 0 }}>
+                        <TeamDisplay team={match.teamB} reverse />
+                      </Box>
+                    </Grid>
+                  </CardContent>
+                </Card>
+                <Dialog open={updateModalOpen} onClose={cancelUpdate}>
+                  <DialogTitle sx={{bgcolor:'#134755'}}>Actualizar partido</DialogTitle>
+                    <UpdateMatchForm
+                      match={match}
+                      cancelUpdate={cancelUpdate}
+                      setMessage={setMessage}
+                    />
+                </Dialog>
+              </Grid>
           ))}
         </Grid>
       )}
       <Dialog open={open} onClose={cancelDelete}>
-        <DialogTitle>¿Estás seguro?</DialogTitle>
-        <DialogContent>
+        <DialogTitle sx={{bgcolor:'#134755'}}>¿Estás seguro?</DialogTitle>
+        <DialogContent sx={{bgcolor: '#00313e'}}>
           Esta acción eliminará el partido permanentemente.
         </DialogContent>
-        <DialogActions>
-          <Button onClick={cancelDelete}>Cancelar</Button>
+        <DialogActions sx={{bgcolor: '#00313e'}}>
+          <Button onClick={cancelDelete} color='secondary' variant='contained'>Cancelar</Button>
           <Button onClick={confirmDelete} color='error' variant='contained'>
             Eliminar
           </Button>
         </DialogActions>
       </Dialog>
       <Dialog open={modalOpen} onClose={cancelAddMatch}>
-        <DialogTitle>Añadir partido</DialogTitle>
-        <DialogContent>
+        <DialogTitle sx={{bgcolor:'#134755'}}>Añadir partido</DialogTitle>
           <AddMatchForm
             teams={teams}
             cancelAddMatch={cancelAddMatch}
-            refreshMatches={refreshMatches}
             setMessage={setMessage}
           />
-        </DialogContent>
-      </Dialog>
-      <Dialog open={updateModalOpen} onClose={cancelUpdate}>
-        <DialogTitle>Actualizar partido</DialogTitle>
-        <DialogContent>Formulario</DialogContent>
       </Dialog>
     </Box>
   );
@@ -230,7 +241,7 @@ function TeamDisplay({
       <Avatar
         src={team.badge}
         alt={team.name}
-        sx={{ width: 40, height: 40, mx: 1 }}
+        sx={{ width: 40, height: 40, mx: 1, bgcolor:'#d4d8da' }}
       />
       <Typography variant='subtitle1' sx={{ mx: 1 }}>
         {team.name}

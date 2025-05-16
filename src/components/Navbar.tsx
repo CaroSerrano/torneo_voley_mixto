@@ -15,7 +15,7 @@ const Navbar = () => {
   const { data: session } = useSession();
   const isLoggedIn = !!session; // true si hay sesión
   return (
-    <AppBar position='fixed' color='primary'>
+    <AppBar position='fixed' sx={{backgroundColor:'#00313e', boxShadow: '0 4px 12px rgba(255, 255, 255, 0.1)',}}>
       <Container maxWidth='lg'>
         <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
           <Typography variant='h6' component='div' sx={{ flexGrow: 1 }}>

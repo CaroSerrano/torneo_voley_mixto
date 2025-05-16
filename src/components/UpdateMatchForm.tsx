@@ -8,21 +8,22 @@ import {
   DialogContent,
   TextField,
 } from '@mui/material';
-import { ReturnedTeam } from '@/features/teams/types';
+import { ReturnedMatch } from '@/features/matches/types';
 
-interface UpdateTeamFormProps {
-  team: ReturnedTeam;
+interface UpdateMatchFormProps {
+  match: ReturnedMatch;
   cancelUpdate: () => void;
   setMessage: (message: string | null) => void;
 }
 
 interface FormData {
-  name: string;
-  score: number;
+  teamAscore: number;
+  teamBscore: number;
+  date: string;
 }
 
-const UpdateTeamForm: React.FC<UpdateTeamFormProps> = ({
-  team,
+const UpdateMatchForm: React.FC<UpdateMatchFormProps> = ({
+  match,
   cancelUpdate,
   setMessage,
 }) => {
@@ -32,8 +33,9 @@ const UpdateTeamForm: React.FC<UpdateTeamFormProps> = ({
     formState: { errors },
   } = useForm<FormData>({
     defaultValues: {
-      name: team.name,
-      score: team.score,
+      teamAscore: match.teamAscore,
+      teamBscore: match.teamBscore,
+      date: match.date
     },
   });
   const [error, setError] = useState<string | null>(null);
@@ -41,7 +43,7 @@ const UpdateTeamForm: React.FC<UpdateTeamFormProps> = ({
   const onSubmit = async (data: FormData) => {
     console.log(data);
     try {
-      const res = await fetch(`/api/teams/${team._id}`, {
+      const res = await fetch(`/api/matches/${match._id}`, {
         method: 'PATCH',
         body: JSON.stringify(data),
         headers: {
@@ -51,7 +53,7 @@ const UpdateTeamForm: React.FC<UpdateTeamFormProps> = ({
       const jsonData = await res.json();
       console.log(jsonData);
       if (res.ok) {
-        setMessage('Equipo actualizado correctamente');
+        setMessage('Partido actualizado correctamente');
         cancelUpdate();
         setTimeout(() => {
           setMessage(null);
@@ -73,33 +75,43 @@ const UpdateTeamForm: React.FC<UpdateTeamFormProps> = ({
       {error && <Alert severity='error'>{error}</Alert>}
       <Box component='form' onSubmit={handleSubmit(onSubmit)} noValidate>
         <TextField
-          label='Nombre'
-          fullWidth
-          margin='normal'
-          {...register('name', {
-            minLength: {
-              value: 2,
-              message: 'El nombre del equipo debe tener al menos 2 caracteres',
-            },
-          })}
-          error={!!errors.name}
-          helperText={errors.name?.message}
-        />
-
-        <TextField
-          label='Puntaje'
+          label={`Puntaje de ${match.teamA.name}`}
           type='number'
           fullWidth
           margin='normal'
-          {...register('score', {
+          sx={{label: {color: 'white'}}}
+          {...register('teamAscore', {
+            valueAsNumber: true
+          })}
+          error={!!errors.teamAscore}
+          helperText={errors.teamAscore?.message}
+        />
+
+        <TextField
+          label={`Puntaje de ${match.teamB.name}`}
+          type='number'
+          fullWidth
+          margin='normal'
+          {...register('teamBscore', {
             valueAsNumber: true,
           })}
-          error={!!errors.score}
-          helperText={errors.score?.message}
+          error={!!errors.teamBscore}
+          helperText={errors.teamBscore?.message}
+        />
+
+        <TextField
+          type='datetime-local'
+          fullWidth
+          margin='normal'
+          {...register('date', {
+            valueAsDate: true,
+          })}
+          error={!!errors.date}
+          helperText={errors.date?.message}
         />
 
         <DialogActions>
-          <Button onClick={cancelUpdate} variant='contained' color='secondary'>Cancelar</Button>
+          <Button color='secondary' variant='contained' onClick={cancelUpdate}>Cancelar</Button>
           <Button type='submit' color='success' variant='contained'>
             Actualizar
           </Button>
@@ -109,4 +121,4 @@ const UpdateTeamForm: React.FC<UpdateTeamFormProps> = ({
   );
 };
 
-export default UpdateTeamForm;
+export default UpdateMatchForm;

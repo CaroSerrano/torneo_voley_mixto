@@ -34,7 +34,7 @@ const Footer = () => {
           href='https://www.linkedin.com/in/paula-carolina-serrano'
           target='_blank'
           rel='noopener noreferrer'
-          color='inherit'
+          color='primary'
           sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
         >
           <LinkedInIcon fontSize='large' />
