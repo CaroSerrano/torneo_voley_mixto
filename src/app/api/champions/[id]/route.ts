@@ -5,12 +5,21 @@ import {
 } from '@/features/champions/champion.service';
 import { ZodError } from 'zod';
 import { updateChampionDataDto } from '@/features/champions/validations';
+import { auth } from '@/app/auth';
 
 export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const session = await auth();
+
+    if (!session) {
+      return NextResponse.json(
+        { message: 'You must be logged in.' },
+        { status: 401 }
+      );
+    }
     const { id: championId } = await params;
     await deleteChampion(championId);
     return NextResponse.json('Campeón eliminado correctamente');
@@ -28,6 +37,14 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const session = await auth();
+
+    if (!session) {
+      return NextResponse.json(
+        { message: 'You must be logged in.' },
+        { status: 401 }
+      );
+    }
     const { id: championId } = await params;
     const championData = await req.json();
     const parsedData = updateChampionDataDto.parse(championData);

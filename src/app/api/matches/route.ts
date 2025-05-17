@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { loadMatches, addMatch } from '@/features/matches/match.service';
 import { createMatchDataDto } from '@/features/matches/validations';
 import { ZodError } from 'zod';
+import { auth } from '@/app/auth';
 
 export async function GET() {
   try {
@@ -18,6 +19,14 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
+    const session = await auth();
+
+    if (!session) {
+      return NextResponse.json(
+        { message: 'You must be logged in.' },
+        { status: 401 }
+      );
+    }
     const matchData = await req.json();
     const validatedData = createMatchDataDto.parse(matchData);
 
