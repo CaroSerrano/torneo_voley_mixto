@@ -6,6 +6,8 @@ import {
   Alert,
   Box,
   CircularProgress,
+  Dialog,
+  DialogTitle,
   IconButton,
   Paper,
   Table,
@@ -21,9 +23,19 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import useTeams from '@/hooks/useTeams';
+import { useState } from 'react';
+import AddChampionForm from './AddChampionForm';
+import DeleteModal from './DeleteModal';
 
 const ChampionsTable: React.FC = () => {
   const { champions, isErrorChampions, isLoadingChampions } = useChampions();
+  const { teams } = useTeams();
+  const [openModal, setOpenModal] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [idToFetch, setIdToFetch] = useState<string | null>(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { data: session } = useSession();
@@ -34,7 +46,32 @@ const ChampionsTable: React.FC = () => {
   };
 
   const handleDelete = (id: string) => {
-    console.log('borrando', id);
+    setIdToFetch(id);
+    setOpenDeleteModal(true);
+  };
+
+  const cancelDelete = () => {
+    setOpenDeleteModal(false);
+    setIdToFetch(null);
+  };
+
+  const confirmDelete = async () => {
+    if (idToFetch) {
+      try {
+        await fetch(`/api/champions/${idToFetch}`, {
+          method: 'DELETE',
+        });
+      } catch (error) {
+        if (error instanceof Error) {
+          setError(error.message);
+          setTimeout(() => {
+            setError(null);
+          }, 3000);
+        }
+      }
+    }
+    setOpenDeleteModal(false);
+    setIdToFetch(null);
   };
 
   if (isLoadingChampions) {
@@ -59,82 +96,101 @@ const ChampionsTable: React.FC = () => {
   }
   return (
     <Box px={{ xs: 2, sm: 4, md: 0 }}>
-    <TableContainer
-      component={Paper}
-      sx={{
-        backgroundColor: '#00313e',
-        maxWidth: isMobile ? '100%' : 700,
-        margin: 'auto',
-        mt: 20,
-        p: isMobile ? 1 : 2,
-        boxShadow: '0 4px 12px rgba(255, 255, 255, 0.1)',
-        overflowX: 'auto',
-      }}
-    >
-      {isLoggedIn && (
-        <IconButton
-          sx={{
-            color: 'secondary.contrastText',
-            backgroundColor: '#831506',
-            '&:hover': {
-              backgroundColor: '#c04437',
-            },
-          }}
-        >
-          <AddIcon />
-        </IconButton>
-      )}
-      <Typography variant='h5' align='center' sx={{ p: 2 }}>
-        Campeones por Torneo
-      </Typography>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>
-              <strong>Equipo</strong>
-            </TableCell>
-            <TableCell>
-              <strong>Torneo</strong>
-            </TableCell>
-            <TableCell>
-              <strong>Año</strong>
-            </TableCell>
-            {isLoggedIn && (
+      {error && <Alert severity='error'>{error}</Alert>}
+      {message && <Alert severity='success'>{message}</Alert>}
+      <TableContainer
+        component={Paper}
+        sx={{
+          backgroundColor: '#00313e',
+          maxWidth: isMobile ? '100%' : 700,
+          margin: 'auto',
+          mt: 20,
+          p: isMobile ? 1 : 2,
+          boxShadow: '0 4px 12px rgba(255, 255, 255, 0.1)',
+          overflowX: 'auto',
+        }}
+      >
+        {isLoggedIn && (
+          <IconButton
+            sx={{
+              color: 'secondary.contrastText',
+              backgroundColor: '#831506',
+              '&:hover': {
+                backgroundColor: '#c04437',
+              },
+            }}
+            onClick={() => setOpenModal(true)}
+          >
+            <AddIcon />
+          </IconButton>
+        )}
+        <Typography variant='h5' align='center' sx={{ p: 2 }}>
+          Campeones por Torneo
+        </Typography>
+        <Table>
+          <TableHead>
+            <TableRow>
               <TableCell>
-                <strong>Acciones</strong>
+                <strong>Equipo</strong>
               </TableCell>
-            )}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {champions.map((champion: ReturnedChampion) => (
-            <TableRow key={champion._id}>
-              <TableCell>{champion.team}</TableCell>
-              <TableCell>{champion.tournament}</TableCell>
-              <TableCell>{champion.year}</TableCell>
+              <TableCell>
+                <strong>Torneo</strong>
+              </TableCell>
+              <TableCell>
+                <strong>Año</strong>
+              </TableCell>
               {isLoggedIn && (
                 <TableCell>
-                  <IconButton
-                    onClick={() => handleEdit()}
-                    size='small'
-                    sx={{ color: '#cddde2' }}
-                  >
-                    <EditIcon fontSize='small' />
-                  </IconButton>
-                  <IconButton
-                    onClick={() => handleDelete(champion._id)}
-                    size='small'
-                    sx={{ color: '#cddde2' }}
-                  >
-                    <DeleteIcon fontSize='small' />
-                  </IconButton>
+                  <strong>Acciones</strong>
                 </TableCell>
               )}
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableHead>
+          <TableBody>
+            {champions.map((champion: ReturnedChampion) => (
+              <TableRow key={champion._id}>
+                <TableCell>{champion.team}</TableCell>
+                <TableCell>{champion.tournament}</TableCell>
+                <TableCell>{champion.year}</TableCell>
+                {isLoggedIn && (
+                  <TableCell>
+                    <IconButton
+                      onClick={() => handleEdit()}
+                      size='small'
+                      sx={{ color: '#cddde2' }}
+                    >
+                      <EditIcon fontSize='small' />
+                    </IconButton>
+                    <IconButton
+                      onClick={() => handleDelete(champion._id)}
+                      size='small'
+                      sx={{ color: '#cddde2' }}
+                    >
+                      <DeleteIcon fontSize='small' />
+                    </IconButton>
+                  </TableCell>
+                )}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <Dialog open={openModal} onClose={() => setOpenModal(false)}>
+        <DialogTitle sx={{ bgcolor: '#134755' }}>
+          Agregar un campeón
+        </DialogTitle>
+        <AddChampionForm
+          teams={teams}
+          cancelAddChampion={() => setOpenModal(false)}
+          setMessage={setMessage}
+        />
+      </Dialog>
+      <DeleteModal
+        open={openDeleteModal}
+        cancelDelete={cancelDelete}
+        confirmMessage='Esta acción eliminará definitivamente este campeón'
+        confirmDelete={confirmDelete}
+      />
     </Box>
   );
 };

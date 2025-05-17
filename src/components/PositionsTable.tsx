@@ -17,9 +17,6 @@ import {
   useTheme,
   Dialog,
   DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
   Alert,
   CircularProgress,
 } from '@mui/material';
@@ -30,6 +27,7 @@ import IconButton from '@mui/material/IconButton';
 import UpdateTeamForm from './UpdateTeamForm';
 import { ReturnedTeam } from '@/features/teams/types';
 import useTeams from '@/hooks/useTeams';
+import DeleteModal from './DeleteModal';
 
 const PositionsTable: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -231,24 +229,12 @@ const PositionsTable: React.FC = () => {
             )}
           </TableBody>
         </Table>
-        <Dialog open={open} onClose={cancelDelete}>
-          <DialogTitle sx={{ bgcolor: '#134755' }}>¿Estás seguro?</DialogTitle>
-          <DialogContent sx={{ bgcolor: '#00313e' }}>
-            Esta acción eliminará el equipo permanentemente.
-          </DialogContent>
-          <DialogActions sx={{ bgcolor: '#00313e' }}>
-            <Button
-              onClick={cancelDelete}
-              color='secondary'
-              variant='contained'
-            >
-              Cancelar
-            </Button>
-            <Button onClick={confirmDelete} color='error' variant='contained'>
-              Eliminar
-            </Button>
-          </DialogActions>
-        </Dialog>
+        <DeleteModal
+          open={open}
+          cancelDelete={cancelDelete}
+          confirmMessage='Esta acción eliminará el equipo definitivamente'
+          confirmDelete={confirmDelete}
+        />
       </TableContainer>
     </Box>
   );

@@ -12,8 +12,6 @@ import {
   Box,
   Dialog,
   DialogTitle,
-  DialogContent,
-  DialogActions,
   Button,
   Alert,
   CircularProgress,
@@ -25,6 +23,7 @@ import AddMatchForm from './AddMatchForm';
 import UpdateMatchForm from './UpdateMatchForm';
 import useMatches from '@/hooks/useMatches';
 import useTeams from '@/hooks/useTeams';
+import DeleteModal from './DeleteModal';
 
 const Fixture: React.FC = () => {
   const { data: session } = useSession();
@@ -37,12 +36,6 @@ const Fixture: React.FC = () => {
   const [message, setMessage] = useState<string | null>(null);
   const { matches, isLoadingMatches, isErrorMatches } = useMatches();
   const { teams, isLoadingTeams, isErrorTeams } = useTeams();
-
-  const handleEdit = (id: string) => {
-    console.log('Editar equipo', id);
-    setIdToFetch(id);
-    setUpdateModalOpen(true);
-  };
 
   const handleDelete = async (id: string) => {
     setOpen(true);
@@ -156,7 +149,7 @@ const Fixture: React.FC = () => {
                     sx={{ position: 'absolute', top: 8, right: 8, zIndex: 1 }}
                   >
                     <IconButton
-                      onClick={() => handleEdit(match._id)}
+                      onClick={() => setUpdateModalOpen(true)}
                       size='small'
                     >
                       <EditIcon fontSize='small' sx={{ color: '#cddde2' }} />
@@ -215,20 +208,12 @@ const Fixture: React.FC = () => {
           ))}
         </Grid>
       )}
-      <Dialog open={open} onClose={cancelDelete}>
-        <DialogTitle sx={{ bgcolor: '#134755' }}>¿Estás seguro?</DialogTitle>
-        <DialogContent sx={{ bgcolor: '#00313e' }}>
-          Esta acción eliminará el partido permanentemente.
-        </DialogContent>
-        <DialogActions sx={{ bgcolor: '#00313e' }}>
-          <Button onClick={cancelDelete} color='secondary' variant='contained'>
-            Cancelar
-          </Button>
-          <Button onClick={confirmDelete} color='error' variant='contained'>
-            Eliminar
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <DeleteModal
+        open={open}
+        cancelDelete={cancelDelete}
+        confirmMessage='Esta acción eliminará el partido definitivamente'
+        confirmDelete={confirmDelete}
+      />
       <Dialog open={modalOpen} onClose={cancelAddMatch}>
         <DialogTitle sx={{ bgcolor: '#134755' }}>Añadir partido</DialogTitle>
         <AddMatchForm

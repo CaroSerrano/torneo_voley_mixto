@@ -6,7 +6,7 @@ const theme = createTheme({
       default: '#134755',
     },
     text: {
-      primary: '#f2f2f2'
+      primary: '#f2f2f2',
     },
     primary: {
       light: '#3c7d91',
@@ -31,17 +31,21 @@ const theme = createTheme({
     MuiOutlinedInput: {
       styleOverrides: {
         input: {
-          color: 'white', // texto del input
+          color: 'white',
         },
         notchedOutline: {
-          borderColor: '#d4d8da', // borde por defecto
+          borderColor: '#d4d8da',
         },
         root: {
           '&:hover .MuiOutlinedInput-notchedOutline': {
-            borderColor: 'white', // borde al hacer hover
+            borderColor: 'white',
           },
           '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-            borderColor: 'white', // borde al enfocar
+            borderColor: 'white',
+          },
+          // flechita del Select
+          '& .MuiSelect-icon': {
+            color: 'white',
           },
         },
       },
@@ -49,9 +53,9 @@ const theme = createTheme({
     MuiInputLabel: {
       styleOverrides: {
         root: {
-          color: 'white', // color del label por defecto
+          color: 'white',
           '&.Mui-focused': {
-            color: 'white', // color del label al enfocar
+            color: 'white',
           },
         },
       },
@@ -59,7 +63,20 @@ const theme = createTheme({
     MuiFormHelperText: {
       styleOverrides: {
         root: {
-          color: 'white', // helper text y mensaje de error
+          color: 'white',
+        },
+      },
+    },
+    MuiMenuItem: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#00313e',
+          '&:hover': {
+            backgroundColor: '#134755',
+          },
+          '&.Mui-selected': {
+            backgroundColor: '#134755 !important',
+          },
         },
       },
     },
