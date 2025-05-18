@@ -15,8 +15,9 @@ const theme = createTheme({
       contrastText: 'white',
     },
     secondary: {
-      light: '#c04437',
-      main: '#831506',
+      light: '#bda14b',
+      main: '#9b7b1b',
+      dark: "#675212",
       contrastText: 'white',
     },
   },
@@ -43,7 +44,6 @@ const theme = createTheme({
           '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
             borderColor: 'white',
           },
-          // flechita del Select
           '& .MuiSelect-icon': {
             color: 'white',
           },
@@ -76,6 +76,19 @@ const theme = createTheme({
           },
           '&.Mui-selected': {
             backgroundColor: '#134755 !important',
+          },
+        },
+      },
+    },
+    MuiSelect: {
+      defaultProps: {
+        MenuProps: {
+          slotProps: {
+            paper: {
+              sx: {
+                backgroundColor: '#00313e',
+              },
+            },
           },
         },
       },
