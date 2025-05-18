@@ -10,7 +10,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
+  // TextField,
   Typography,
   Avatar,
   useMediaQuery,
@@ -25,12 +25,12 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
 import UpdateTeamForm from './UpdateTeamForm';
-import { ReturnedTeam } from '@/features/teams/types';
+// import { ReturnedTeam } from '@/features/teams/types';
 import useTeams from '@/hooks/useTeams';
 import DeleteModal from './DeleteModal';
 
 const PositionsTable: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState('');
+  // const [searchQuery, setSearchQuery] = useState('');
   const [open, setOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [idToFetch, setIdToFetch] = useState<string | null>(null);
@@ -38,14 +38,14 @@ const PositionsTable: React.FC = () => {
   const [message, setMessage] = useState<string | null>(null);
   const { data: session } = useSession();
   const isLoggedIn = !!session;
-  const { teams, isLoadingTeams, isErrorTeams } = useTeams();
+  const { teams, isLoadingTeams, isErrorTeams, deleteTeam } = useTeams();
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(event.target.value);
-  };
+  // const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setSearchQuery(event.target.value);
+  // };
 
   const handleEdit = () => {
     setModalOpen(true);
@@ -58,10 +58,7 @@ const PositionsTable: React.FC = () => {
   const confirmDelete = async () => {
     if (idToFetch) {
       try {
-        console.log('Eliminar equipo', idToFetch);
-        await fetch(`/api/teams/${idToFetch}`, {
-          method: 'DELETE',
-        });
+        await deleteTeam(idToFetch);
       } catch (error) {
         if (error instanceof Error) {
           setError(error.message);
@@ -102,9 +99,9 @@ const PositionsTable: React.FC = () => {
     return <Alert severity='warning'>Datos no disponibles</Alert>;
   }
 
-  const filteredTeams = teams.filter((team: ReturnedTeam) =>
-    team.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // const filteredTeams = teams.filter((team: ReturnedTeam) =>
+  //   team.name.toLowerCase().includes(searchQuery.toLowerCase())
+  // );
 
   return (
     <Box px={{ xs: 2, sm: 4, md: 0 }}>
@@ -126,7 +123,7 @@ const PositionsTable: React.FC = () => {
         {error && <Alert severity='error'>{error}</Alert>}
         {message && <Alert severity='success'>{message}</Alert>}
 
-        <TextField
+        {/* <TextField
           label='Buscar equipo'
           variant='outlined'
           size='small'
@@ -150,7 +147,7 @@ const PositionsTable: React.FC = () => {
               },
             },
           }}
-        />
+        /> */}
 
         <Table size={isMobile ? 'small' : 'medium'}>
           <TableHead>
@@ -172,7 +169,7 @@ const PositionsTable: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredTeams.map((team, index) => (
+            {teams.map((team, index) => (
               <TableRow key={team._id}>
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>
@@ -218,10 +215,10 @@ const PositionsTable: React.FC = () => {
                 </Dialog>
               </TableRow>
             ))}
-            {filteredTeams.length === 0 && (
+            {teams.length === 0 && (
               <TableRow>
                 <TableCell colSpan={3} align='center'>
-                  <Typography variant='body2' color='text.secondary'>
+                  <Typography variant='body2' color='text.primary'>
                     No se encontraron equipos
                   </Typography>
                 </TableCell>

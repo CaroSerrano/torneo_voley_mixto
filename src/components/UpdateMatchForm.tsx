@@ -9,6 +9,7 @@ import {
   TextField,
 } from '@mui/material';
 import { ReturnedMatch } from '@/features/matches/types';
+import useMatches from '@/hooks/useMatches';
 
 interface UpdateMatchFormProps {
   match: ReturnedMatch;
@@ -19,7 +20,7 @@ interface UpdateMatchFormProps {
 interface FormData {
   teamAscore: number;
   teamBscore: number;
-  date: string;
+  date: Date;
 }
 
 const UpdateMatchForm: React.FC<UpdateMatchFormProps> = ({
@@ -35,30 +36,21 @@ const UpdateMatchForm: React.FC<UpdateMatchFormProps> = ({
     defaultValues: {
       teamAscore: match.teamAscore,
       teamBscore: match.teamBscore,
-      date: match.date
+      date: new Date(match.date),
     },
   });
   const [error, setError] = useState<string | null>(null);
+  const { updateMatch } = useMatches();
 
   const onSubmit = async (data: FormData) => {
     console.log(data);
     try {
-      const res = await fetch(`/api/matches/${match._id}`, {
-        method: 'PATCH',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      const jsonData = await res.json();
-      console.log(jsonData);
-      if (res.ok) {
-        setMessage('Partido actualizado correctamente');
-        cancelUpdate();
-        setTimeout(() => {
-          setMessage(null);
-        }, 3000);
-      }
+      await updateMatch(match._id, data);
+      setMessage('Partido actualizado correctamente');
+      cancelUpdate();
+      setTimeout(() => {
+        setMessage(null);
+      }, 3000);
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);
@@ -71,7 +63,7 @@ const UpdateMatchForm: React.FC<UpdateMatchFormProps> = ({
   };
 
   return (
-    <DialogContent sx={{bgcolor: '#00313e'}}>
+    <DialogContent sx={{ bgcolor: '#00313e' }}>
       {error && <Alert severity='error'>{error}</Alert>}
       <Box component='form' onSubmit={handleSubmit(onSubmit)} noValidate>
         <TextField
@@ -79,9 +71,9 @@ const UpdateMatchForm: React.FC<UpdateMatchFormProps> = ({
           type='number'
           fullWidth
           margin='normal'
-          sx={{label: {color: 'white'}}}
+          sx={{ label: { color: 'white' } }}
           {...register('teamAscore', {
-            valueAsNumber: true
+            valueAsNumber: true,
           })}
           error={!!errors.teamAscore}
           helperText={errors.teamAscore?.message}
@@ -101,17 +93,18 @@ const UpdateMatchForm: React.FC<UpdateMatchFormProps> = ({
 
         <TextField
           type='datetime-local'
+          label='Fecha y hora del encuentro'
           fullWidth
           margin='normal'
-          {...register('date', {
-            valueAsDate: true,
-          })}
+          {...register('date')}
           error={!!errors.date}
           helperText={errors.date?.message}
         />
 
         <DialogActions>
-          <Button color='secondary' variant='contained' onClick={cancelUpdate}>Cancelar</Button>
+          <Button color='secondary' variant='contained' onClick={cancelUpdate}>
+            Cancelar
+          </Button>
           <Button type='submit' color='success' variant='contained'>
             Actualizar
           </Button>

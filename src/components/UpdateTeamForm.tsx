@@ -9,6 +9,7 @@ import {
   TextField,
 } from '@mui/material';
 import { ReturnedTeam } from '@/features/teams/types';
+import useTeams from '@/hooks/useTeams';
 
 interface UpdateTeamFormProps {
   team: ReturnedTeam;
@@ -37,26 +38,16 @@ const UpdateTeamForm: React.FC<UpdateTeamFormProps> = ({
     },
   });
   const [error, setError] = useState<string | null>(null);
+  const {updateTeam} = useTeams();
 
   const onSubmit = async (data: FormData) => {
-    console.log(data);
     try {
-      const res = await fetch(`/api/teams/${team._id}`, {
-        method: 'PATCH',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      const jsonData = await res.json();
-      console.log(jsonData);
-      if (res.ok) {
+      await updateTeam(team._id, data)
         setMessage('Equipo actualizado correctamente');
         cancelUpdate();
         setTimeout(() => {
           setMessage(null);
         }, 3000);
-      }
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);

@@ -14,6 +14,7 @@ import {
   TextField,
 } from '@mui/material';
 import { ReturnedTeam } from '@/features/teams/types';
+import useMatches from '@/hooks/useMatches';
 
 interface AddMatchFormProps {
   cancelAddMatch: () => void;
@@ -27,6 +28,7 @@ interface FormData {
   teamAscore: number;
   teamBscore: number;
   date: Date;
+  matchday: number;
 }
 
 const AddMatchForm: React.FC<AddMatchFormProps> = ({
@@ -43,27 +45,17 @@ const AddMatchForm: React.FC<AddMatchFormProps> = ({
   const [teamA, setTeamA] = useState<string>('');
   const [teamB, setTeamB] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { createMatch } = useMatches();
 
   const onSubmit = async (data: FormData) => {
-    console.log(data);
     try {
       setIsLoading(true);
-      const res = await fetch(`/api/matches`, {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      const jsonData = await res.json();
-      console.log(jsonData);
-      if (res.ok) {
-        setIsLoading(false);
-        setMessage('Partido agregado correctamente');
-        setTimeout(() => {
-          setMessage(null);
-        }, 3000);
-      }
+      await createMatch(data);
+      setIsLoading(false);
+      setMessage('Partido agregado correctamente');
+      setTimeout(() => {
+        setMessage(null);
+      }, 3000);
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);
@@ -112,18 +104,30 @@ const AddMatchForm: React.FC<AddMatchFormProps> = ({
             </MenuItem>
           ))}
         </Select>
-        <InputLabel id='date-label'>Fecha y hora</InputLabel>
+        <InputLabel id='date-label'>Fecha y hora del encuentro</InputLabel>
         <TextField
           type='datetime-local'
           fullWidth
-          margin='normal'
+          margin='none'
           {...register('date', {
             valueAsDate: true,
           })}
           error={!!errors.date}
           helperText={errors.date?.message}
         />
-
+        <InputLabel id='matchday-label'>Fecha</InputLabel>
+        <TextField
+          type='number'
+          fullWidth
+          margin='none'
+          {...register('matchday', {
+            valueAsNumber: true,
+            min: 1,
+            max: 9,
+          })}
+          error={!!errors.matchday}
+          helperText={errors.matchday?.message}
+        />
         <DialogActions>
           <Button
             onClick={cancelAddMatch}

@@ -9,14 +9,14 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth();
+    // const session = await auth();
 
-    if (!session) {
-      return NextResponse.json(
-        { message: 'You must be logged in.' },
-        { status: 401 }
-      );
-    }
+    // if (!session) {
+    //   return NextResponse.json(
+    //     { message: 'You must be logged in.' },
+    //     { status: 401 }
+    //   );
+    // }
     const { id: matchId } = await params;
     await deleteMatch(matchId);
     return NextResponse.json('Partido eliminado correctamente');

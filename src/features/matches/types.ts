@@ -1,4 +1,4 @@
-import { ReturnedTeam } from "../teams/types";
+import { ReturnedTeam } from '../teams/types';
 
 export interface IMatch {
   teamA: ReturnedTeam;
@@ -6,6 +6,7 @@ export interface IMatch {
   teamB: ReturnedTeam;
   teamBscore: number;
   date: string;
+  matchday: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -21,6 +22,7 @@ export interface CreatedMatch {
   teamB: string;
   teamBscore: number;
   date: string;
+  matchday: number;
   createdAt: string;
   updatedAt: string;
 }

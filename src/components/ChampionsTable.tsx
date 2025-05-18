@@ -27,40 +27,53 @@ import useTeams from '@/hooks/useTeams';
 import { useState } from 'react';
 import AddChampionForm from './AddChampionForm';
 import DeleteModal from './DeleteModal';
+import UpdateChampionForm from './UpdateChampionForm';
 
 const ChampionsTable: React.FC = () => {
-  const { champions, isErrorChampions, isLoadingChampions } = useChampions();
+  const { champions, isErrorChampions, isLoadingChampions, deleteChampion } =
+    useChampions();
   const { teams } = useTeams();
   const [openModal, setOpenModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [openUpdateModal, setOpenUpdateModal] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [idToFetch, setIdToFetch] = useState<string | null>(null);
+  const [idToDelete, setIdToDelete] = useState<string | null>(null);
+  const [championToEdit, setChampionToEdit] = useState<ReturnedChampion | null>(
+    null
+  );
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { data: session } = useSession();
   const isLoggedIn = !!session;
 
-  const handleEdit = () => {
-    console.log('editando');
+  const handleEdit = (id: string) => {
+    const championToEdit = champions?.find((c) => c._id === id);
+    if (championToEdit) {
+      setChampionToEdit(championToEdit);
+      setOpenUpdateModal(true);
+    }
   };
 
   const handleDelete = (id: string) => {
-    setIdToFetch(id);
+    setIdToDelete(id);
     setOpenDeleteModal(true);
   };
 
   const cancelDelete = () => {
     setOpenDeleteModal(false);
-    setIdToFetch(null);
+    setIdToDelete(null);
+  };
+
+    const cancelUpdate = () => {
+    setOpenUpdateModal(false);
+    setChampionToEdit(null);
   };
 
   const confirmDelete = async () => {
-    if (idToFetch) {
+    if (idToDelete) {
       try {
-        await fetch(`/api/champions/${idToFetch}`, {
-          method: 'DELETE',
-        });
+        await deleteChampion(idToDelete);
       } catch (error) {
         if (error instanceof Error) {
           setError(error.message);
@@ -71,7 +84,7 @@ const ChampionsTable: React.FC = () => {
       }
     }
     setOpenDeleteModal(false);
-    setIdToFetch(null);
+    setIdToDelete(null);
   };
 
   if (isLoadingChampions) {
@@ -114,17 +127,22 @@ const ChampionsTable: React.FC = () => {
           <IconButton
             sx={{
               color: 'secondary.contrastText',
-              backgroundColor: '#831506',
+              backgroundColor: '#9b7b1b',
               '&:hover': {
-                backgroundColor: '#c04437',
+                backgroundColor: '#675212',
               },
+              mb: 1,
             }}
             onClick={() => setOpenModal(true)}
           >
             <AddIcon />
           </IconButton>
         )}
-        <Typography variant='h5' align='center' sx={{ p: 2 }}>
+        <Typography
+          variant='h5'
+          align='center'
+          sx={{ p: 1, backgroundColor: '#9b7b1b', borderRadius: 1 }}
+        >
           Campeones por Torneo
         </Typography>
         <Table>
@@ -155,7 +173,7 @@ const ChampionsTable: React.FC = () => {
                 {isLoggedIn && (
                   <TableCell>
                     <IconButton
-                      onClick={() => handleEdit()}
+                      onClick={() => handleEdit(champion._id)}
                       size='small'
                       sx={{ color: '#cddde2' }}
                     >
@@ -185,6 +203,23 @@ const ChampionsTable: React.FC = () => {
           setMessage={setMessage}
         />
       </Dialog>
+      {championToEdit && (
+        <Dialog
+          open={openUpdateModal}
+          onClose={() => setOpenUpdateModal(false)}
+        >
+          <DialogTitle sx={{ bgcolor: '#134755' }}>
+            Actualizar campeón
+          </DialogTitle>
+          <UpdateChampionForm
+            open={openUpdateModal}
+            teams={teams}
+            cancelUpdateChampion={cancelUpdate}
+            setMessage={setMessage}
+            champion={championToEdit}
+          />
+        </Dialog>
+      )}
       <DeleteModal
         open={openDeleteModal}
         cancelDelete={cancelDelete}

@@ -15,10 +15,15 @@ import {
   Button,
   Alert,
   CircularProgress,
+  FormControl,
+  Select,
+  MenuItem,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import AddMatchForm from './AddMatchForm';
 import UpdateMatchForm from './UpdateMatchForm';
 import useMatches from '@/hooks/useMatches';
@@ -34,7 +39,8 @@ const Fixture: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [idToFetch, setIdToFetch] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-  const { matches, isLoadingMatches, isErrorMatches } = useMatches();
+  const [selectedMatchday, setSelectedMatchday] = useState(1);
+  const { matches, isLoadingMatches, isErrorMatches, deleteMatch } = useMatches();
   const { teams, isLoadingTeams, isErrorTeams } = useTeams();
 
   const handleDelete = async (id: string) => {
@@ -42,12 +48,17 @@ const Fixture: React.FC = () => {
     setIdToFetch(id);
   };
 
+  const handlePrevMatchday = () => {
+    if (selectedMatchday > 1) setSelectedMatchday((prev) => prev - 1);
+  };
+
+  const handleNextMatchday = () => {
+    if (selectedMatchday < 9) setSelectedMatchday((prev) => prev + 1);
+  };
   const confirmDelete = async () => {
     if (idToFetch) {
       try {
-        await fetch(`/api/matches/${idToFetch}`, {
-          method: 'DELETE',
-        });
+        await deleteMatch(idToFetch)
       } catch (error) {
         if (error instanceof Error) {
           setError(error.message);
@@ -97,6 +108,10 @@ const Fixture: React.FC = () => {
     return <Alert severity='warning'>Datos no disponibles</Alert>;
   }
 
+  const filteredMatches = matches.filter(
+    (match) => match.matchday === selectedMatchday
+  );
+
   return (
     <Box sx={{ p: 2, mb: 5 }}>
       {error && <Alert severity='error'>{error}</Alert>}
@@ -110,6 +125,76 @@ const Fixture: React.FC = () => {
         >
           Fixture
         </Typography>
+        <Box
+          display='flex'
+          justifyContent='center'
+          alignItems='center'
+          gap={2}
+          my={2}
+        >
+          <IconButton
+            onClick={handlePrevMatchday}
+            disabled={selectedMatchday === 1}
+          >
+            <ArrowBackIosNewIcon sx={{ color: 'white' }} />
+          </IconButton>
+          <FormControl sx={{ minWidth: 120 }}>
+            <Select
+              value={selectedMatchday}
+              onChange={(e) => setSelectedMatchday(Number(e.target.value))}
+              displayEmpty
+              MenuProps={{
+                PaperProps: {
+                  sx: {
+                    backgroundColor: '#9b7b1b',
+                    color: 'white',
+                  },
+                },
+              }}
+              sx={{
+                backgroundColor: '#9b7b1b',
+                color: 'white',
+                boxShadow: '0 4px 12px rgba(255, 255, 255, 0.1)',
+                borderRadius: 1,
+                '& fieldset': {
+                  border: 'none',
+                },
+                '& .MuiSvgIcon-root': {
+                  color: 'white',
+                },
+              }}
+            >
+              {[...Array(9)].map((_, i) => (
+                <MenuItem
+                  key={i + 1}
+                  value={i + 1}
+                  sx={{
+                    backgroundColor: '#9b7b1b',
+                    color: 'white',
+                    '&:hover': {
+                      backgroundColor: '#675212',
+                    },
+                    '&.Mui-selected': {
+                      backgroundColor: '#675212 !important',
+                      color: 'white',
+                    },
+                    '&.Mui-selected:hover': {
+                      backgroundColor: '#675212',
+                    },
+                  }}
+                >
+                  <strong>Fecha {i + 1}</strong>
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <IconButton
+            onClick={handleNextMatchday}
+            disabled={selectedMatchday === 9}
+          >
+            <ArrowForwardIosIcon sx={{ color: 'white' }} />
+          </IconButton>
+        </Box>
         {isLoggedIn && (
           <Button
             color='secondary'
@@ -121,14 +206,14 @@ const Fixture: React.FC = () => {
           </Button>
         )}
       </Box>
-      {matches.length === 0 && (
+      {filteredMatches.length === 0 && (
         <Typography variant='h6' align='center' color='primary.contrastText'>
           Aún no hay partidos
         </Typography>
       )}
-      {matches.length > 0 && (
+      {filteredMatches.length > 0 && (
         <Grid container spacing={2}>
-          {matches.map((match: ReturnedMatch) => (
+          {filteredMatches.map((match: ReturnedMatch) => (
             <Grid
               size={{ xs: 12 }}
               display='flex'

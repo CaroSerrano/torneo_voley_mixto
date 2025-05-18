@@ -29,9 +29,9 @@ const Navbar = () => {
   };
 
   const menuItems = [
-    { label: 'Tabla', href: '/#positions' },
-    { label: 'Fixture', href: '/#fixture' },
+    { label: 'Inicio', href: '/' },
     { label: 'Campeones', href: '/champions' },
+    { label: 'Llaves', href: '/bracket' },
     !isLoggedIn
       ? { label: 'Iniciar sesión', href: '/login' }
       : { label: 'Cerrar sesión', action: () => signOut() },

@@ -14,6 +14,7 @@ export const createMatchDataDto = z.object({
   teamB: zObjectId,
   teamBscore: z.number().int().optional(),
   date: z.coerce.date(),
+  matchday: z.number().int(),
 });
 
 export type CreateMatchData = z.infer<typeof createMatchDataDto>;
@@ -24,6 +25,7 @@ export const updateMatchDataDto = createMatchDataDto
     teamA: zObjectId.optional(),
     teamB: zObjectId.optional(),
     date: z.coerce.date().optional(),
+    matchday: z.number().int().optional(),
   })
   .partial();
 

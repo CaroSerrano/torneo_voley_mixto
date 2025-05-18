@@ -14,6 +14,8 @@ import {
   TextField,
 } from '@mui/material';
 import { ReturnedTeam } from '@/features/teams/types';
+import { Tournament } from '@/features/champions/types';
+import useChampions from '@/hooks/useChampions';
 
 interface AddChampionFormProps {
   cancelAddChampion: () => void;
@@ -23,7 +25,7 @@ interface AddChampionFormProps {
 
 interface FormData {
   team: string;
-  tournament: 'Apertura' | 'Clausura';
+  tournament: Tournament;
   year: number;
 }
 
@@ -41,27 +43,18 @@ const AddChampionForm: React.FC<AddChampionFormProps> = ({
   const [team, setTeam] = useState<string>('');
   const [tournament, setTournament] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { createChampion } = useChampions();
 
   const onSubmit = async (data: FormData) => {
     console.log(data);
     try {
       setIsLoading(true);
-      const res = await fetch(`/api/champions`, {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      const jsonData = await res.json();
-      console.log(jsonData);
-      if (res.ok) {
-        setIsLoading(false);
-        setMessage('Campeón agregado correctamente');
-        setTimeout(() => {
-          setMessage(null);
-        }, 3000);
-      }
+      createChampion(data);
+      setIsLoading(false);
+      setMessage('Campeón agregado correctamente');
+      setTimeout(() => {
+        setMessage(null);
+      }, 3000);
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);
