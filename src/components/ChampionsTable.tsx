@@ -174,7 +174,7 @@ const ChampionsTable: React.FC = () => {
                       <Avatar
                         src={champion.team.badge}
                         alt={champion.team.name}
-                        sx={{ width: 24, height: 24, bgcolor: '#d4d8da' }}
+                        sx={{ width: 28, height: 28, bgcolor: '#d4d8da' }}
                       />
                     )}
                     <span>{champion.team.name}</span>

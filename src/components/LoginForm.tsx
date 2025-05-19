@@ -50,9 +50,9 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <Paper elevation={3} sx={{ maxWidth: 400, mx: 'auto', mt: 20, p: 4 }}>
+    <Paper elevation={3} sx={{ maxWidth: 400, mx: 'auto', mt: 20, p: 4, backgroundColor:'#00313e' }}>
       {error && <Alert severity='error'>{error}</Alert>}
-      <Typography variant='h5' color='primary' component='h1' gutterBottom align='center'>
+      <Typography variant='h5' color='primary.contrastText' component='h1' gutterBottom align='center'>
         Iniciar Sesión
       </Typography>
 
@@ -61,7 +61,6 @@ const LoginForm: React.FC = () => {
           label='Email'
           fullWidth
           margin='normal'
-          sx={{input: {color: 'black'}}}
           {...register('email', {
             required: 'El email es obligatorio',
             pattern: {
@@ -78,7 +77,6 @@ const LoginForm: React.FC = () => {
           type={showPassword ? 'text' : 'password'}
           fullWidth
           margin='normal'
-          sx={{input: {color: 'black'}}}
           {...register('password', {
             required: 'La contraseña es obligatoria',
           })}
@@ -92,7 +90,7 @@ const LoginForm: React.FC = () => {
                     onClick={() => setShowPassword((prev) => !prev)}
                     edge='end'
                   >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                    {showPassword ? <VisibilityOff color='secondary'/> : <Visibility color='secondary' />}
                   </IconButton>
                 </InputAdornment>
               ),

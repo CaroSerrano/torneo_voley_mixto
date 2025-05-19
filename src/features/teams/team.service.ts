@@ -3,6 +3,7 @@ import Team from '@/models/Team';
 import { ReturnedTeam } from '@/features/teams/types';
 import { CreateTeamData, UpdateTeamData } from '@/features/teams/validations';
 import { Match } from '@/models/Match';
+import { Champion } from '@/models/Champion';
 
 export async function loadTeams(): Promise<ReturnedTeam[]> {
   await connectDB();
@@ -22,8 +23,13 @@ export async function deleteTeam(teamId: string): Promise<ReturnedTeam> {
     $or: [{ teamA: teamId }, { teamB: teamId }],
   });
   const matchIds = teamMatches.map((match) => match._id);
-
   await Match.deleteMany({ _id: { $in: matchIds } });
+  const teamChampions = await Champion.find({
+    team: teamId,
+  });
+  const championIds = teamChampions.map((champion) => champion._id);
+  await Champion.deleteMany({ _id: { $in: championIds } });
+
   const deletedTeam = await Team.findByIdAndDelete(teamId);
   return deletedTeam;
 }

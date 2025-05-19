@@ -46,7 +46,7 @@ const UpdateChampionForm: React.FC<UpdateChampionFormProps> = ({
     formState: { errors },
   } = useForm<FormData>({
     defaultValues: {
-      team: champion.team,
+      team: champion.team.name,
       tournament: champion.tournament,
       year: champion.year,
     },

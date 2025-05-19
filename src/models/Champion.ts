@@ -20,4 +20,4 @@ export const championsSchema = new Schema<ChampionDocument>(
   { timestamps: true }
 );
 
-export default models.Champion || model<ChampionDocument>('Champion', championsSchema);
+export const Champion = models.Champion || model<ChampionDocument>('Champion', championsSchema);

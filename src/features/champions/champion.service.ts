@@ -1,11 +1,13 @@
 import { connectDB } from '@/utils/mongoose';
-import Champion from '@/models/Champion';
+import { Champion } from '@/models/Champion';
 import { ReturnedChampion } from './types';
 import { CreateChampionData, UpdateChampionData } from './validations';
 
 export async function loadChampions(): Promise<ReturnedChampion[]> {
   await connectDB();
-  const champions = await Champion.find().populate('team').sort({ year: -1, tournament: -1 });
+  const champions = await Champion.find()
+    .populate('team')
+    .sort({ year: -1, tournament: -1 });
   return champions;
 }
 

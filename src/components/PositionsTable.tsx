@@ -15,8 +15,6 @@ import {
   Avatar,
   useMediaQuery,
   useTheme,
-  Dialog,
-  DialogTitle,
   Alert,
   CircularProgress,
 } from '@mui/material';
@@ -25,9 +23,9 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
 import UpdateTeamForm from './UpdateTeamForm';
-// import { ReturnedTeam } from '@/features/teams/types';
 import useTeams from '@/hooks/useTeams';
 import DeleteModal from './DeleteModal';
+import { ReturnedTeam } from '@/features/teams/types';
 
 const PositionsTable: React.FC = () => {
   // const [searchQuery, setSearchQuery] = useState('');
@@ -36,6 +34,7 @@ const PositionsTable: React.FC = () => {
   const [idToFetch, setIdToFetch] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [teamToUpdate, setTeamToUpdate] = useState<ReturnedTeam | null>(null);
   const { data: session } = useSession();
   const isLoggedIn = !!session;
   const { teams, isLoadingTeams, isErrorTeams, deleteTeam } = useTeams();
@@ -47,8 +46,12 @@ const PositionsTable: React.FC = () => {
   //   setSearchQuery(event.target.value);
   // };
 
-  const handleEdit = () => {
-    setModalOpen(true);
+  const handleEdit = (id: string) => {
+    const team = teams?.find((t) => t._id === id);
+    if (team) {
+      setTeamToUpdate(team);
+      setModalOpen(true);
+    }
   };
 
   const handleDelete = (id: string) => {
@@ -99,9 +102,9 @@ const PositionsTable: React.FC = () => {
     return <Alert severity='warning'>Datos no disponibles</Alert>;
   }
 
-  // const filteredTeams = teams.filter((team: ReturnedTeam) =>
-  //   team.name.toLowerCase().includes(searchQuery.toLowerCase())
-  // );
+  const filteredTeams = teams.filter(
+    (team: ReturnedTeam) => team.status === 'ACTIVE'
+  );
 
   return (
     <Box px={{ xs: 2, sm: 4, md: 0 }}>
@@ -117,7 +120,11 @@ const PositionsTable: React.FC = () => {
           overflowX: 'auto',
         }}
       >
-        <Typography variant='h4' align='center' sx={{ mb: 2 }}>
+        <Typography
+          variant={isMobile ? 'h6' : 'h4'}
+          align='center'
+          sx={{ mb: 2 }}
+        >
           Tabla de Posiciones
         </Typography>
         {error && <Alert severity='error'>{error}</Alert>}
@@ -169,7 +176,7 @@ const PositionsTable: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {teams.map((team, index) => (
+            {filteredTeams.map((team, index) => (
               <TableRow key={team._id}>
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>
@@ -178,7 +185,7 @@ const PositionsTable: React.FC = () => {
                       <Avatar
                         src={team.badge}
                         alt={team.name}
-                        sx={{ width: 24, height: 24, bgcolor: '#d4d8da' }}
+                        sx={{ width: 28, height: 28, bgcolor: '#d4d8da' }}
                       />
                     )}
                     <span>{team.name}</span>
@@ -188,7 +195,7 @@ const PositionsTable: React.FC = () => {
                 {isLoggedIn && (
                   <TableCell>
                     <IconButton
-                      onClick={() => handleEdit()}
+                      onClick={() => handleEdit(team._id)}
                       size='small'
                       sx={{ color: '#cddde2' }}
                     >
@@ -203,19 +210,9 @@ const PositionsTable: React.FC = () => {
                     </IconButton>
                   </TableCell>
                 )}
-                <Dialog open={modalOpen} onClose={cancelUpdate}>
-                  <DialogTitle sx={{ bgcolor: '#134755' }}>
-                    Actualizar equipo
-                  </DialogTitle>
-                  <UpdateTeamForm
-                    team={team}
-                    cancelUpdate={cancelUpdate}
-                    setMessage={setMessage}
-                  />
-                </Dialog>
               </TableRow>
             ))}
-            {teams.length === 0 && (
+            {filteredTeams.length === 0 && (
               <TableRow>
                 <TableCell colSpan={3} align='center'>
                   <Typography variant='body2' color='text.primary'>
@@ -232,6 +229,14 @@ const PositionsTable: React.FC = () => {
           confirmMessage='Esta acción eliminará el equipo definitivamente'
           confirmDelete={confirmDelete}
         />
+        {teamToUpdate && (
+          <UpdateTeamForm
+            open={modalOpen}
+            team={teamToUpdate}
+            cancelUpdate={cancelUpdate}
+            setMessage={setMessage}
+          />
+        )}
       </TableContainer>
     </Box>
   );

@@ -55,6 +55,7 @@ const Navbar = () => {
                 width={32}
                 height={32}
               />
+              <Box display='block' alignItems='center' sx={{ justifyItems: 'center' }}>
               <Typography
                 sx={{
                   fontSize: {
@@ -63,10 +64,25 @@ const Navbar = () => {
                     md: '1.5rem', // desktop
                   },
                   fontWeight: 500,
+                  
                 }}
               >
                 Torneo Voley Mixto
               </Typography>
+              <Typography
+                sx={{
+                  fontSize: {
+                    xs: '0.5rem', // para pantallas pequeñas
+                    sm: '0.65rem', // tablets
+                    md: '0.75rem', // desktop
+                  },
+                  fontWeight: 300,
+                  whiteSpace: 'pre',
+                }}
+              >
+                L   a     P   l   a   t   a
+              </Typography>
+              </Box>
             </Box>
           </Button>
 

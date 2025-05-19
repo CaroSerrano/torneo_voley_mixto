@@ -4,14 +4,19 @@ import {
   Alert,
   Box,
   Button,
+  Dialog,
   DialogActions,
   DialogContent,
+  DialogTitle,
+  MenuItem,
+  Select,
   TextField,
 } from '@mui/material';
-import { ReturnedTeam } from '@/features/teams/types';
+import { ReturnedTeam, Status } from '@/features/teams/types';
 import useTeams from '@/hooks/useTeams';
 
 interface UpdateTeamFormProps {
+  open: boolean;
   team: ReturnedTeam;
   cancelUpdate: () => void;
   setMessage: (message: string | null) => void;
@@ -20,9 +25,11 @@ interface UpdateTeamFormProps {
 interface FormData {
   name: string;
   score: number;
+  status?: Status;
 }
 
 const UpdateTeamForm: React.FC<UpdateTeamFormProps> = ({
+  open,
   team,
   cancelUpdate,
   setMessage,
@@ -35,19 +42,21 @@ const UpdateTeamForm: React.FC<UpdateTeamFormProps> = ({
     defaultValues: {
       name: team.name,
       score: team.score,
+      status: team.status,
     },
   });
   const [error, setError] = useState<string | null>(null);
-  const {updateTeam} = useTeams();
+  const [status, setStatus] = useState<string>(team.status);
+  const { updateTeam } = useTeams();
 
   const onSubmit = async (data: FormData) => {
     try {
-      await updateTeam(team._id, data)
-        setMessage('Equipo actualizado correctamente');
-        cancelUpdate();
-        setTimeout(() => {
-          setMessage(null);
-        }, 3000);
+      await updateTeam(team._id, data);
+      setMessage('Equipo actualizado correctamente');
+      cancelUpdate();
+      setTimeout(() => {
+        setMessage(null);
+      }, 3000);
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);
@@ -60,43 +69,67 @@ const UpdateTeamForm: React.FC<UpdateTeamFormProps> = ({
   };
 
   return (
-    <DialogContent sx={{bgcolor: '#00313e'}}>
-      {error && <Alert severity='error'>{error}</Alert>}
-      <Box component='form' onSubmit={handleSubmit(onSubmit)} noValidate>
-        <TextField
-          label='Nombre'
-          fullWidth
-          margin='normal'
-          {...register('name', {
-            minLength: {
-              value: 2,
-              message: 'El nombre del equipo debe tener al menos 2 caracteres',
-            },
-          })}
-          error={!!errors.name}
-          helperText={errors.name?.message}
-        />
+    <Dialog open={open} onClose={cancelUpdate}>
+      <DialogTitle sx={{ bgcolor: '#134755' }}>Actualizar equipo</DialogTitle>
+      <DialogContent sx={{ bgcolor: '#00313e' }}>
+        {error && <Alert severity='error'>{error}</Alert>}
+        <Box component='form' onSubmit={handleSubmit(onSubmit)} noValidate>
+          <TextField
+            label='Nombre'
+            fullWidth
+            margin='normal'
+            {...register('name', {
+              minLength: {
+                value: 2,
+                message:
+                  'El nombre del equipo debe tener al menos 2 caracteres',
+              },
+            })}
+            error={!!errors.name}
+            helperText={errors.name?.message}
+          />
 
-        <TextField
-          label='Puntaje'
-          type='number'
-          fullWidth
-          margin='normal'
-          {...register('score', {
-            valueAsNumber: true,
-          })}
-          error={!!errors.score}
-          helperText={errors.score?.message}
-        />
+          <TextField
+            label='Puntaje'
+            type='number'
+            fullWidth
+            margin='normal'
+            {...register('score', {
+              valueAsNumber: true,
+            })}
+            error={!!errors.score}
+            helperText={errors.score?.message}
+          />
+          <Select
+            fullWidth
+            labelId='Status'
+            {...register('status')}
+            error={!!errors.status}
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+            MenuProps={{
+              slotProps: { paper: { sx: { backgroundColor: '#00313e' } } },
+            }}
+          >
+            <MenuItem value='ACTIVE'>Active</MenuItem>
+            <MenuItem value='INACTIVE'>Inactive</MenuItem>
+          </Select>
 
-        <DialogActions>
-          <Button onClick={cancelUpdate} variant='contained' color='secondary'>Cancelar</Button>
-          <Button type='submit' color='success' variant='contained'>
-            Actualizar
-          </Button>
-        </DialogActions>
-      </Box>
-    </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={cancelUpdate}
+              variant='contained'
+              color='secondary'
+            >
+              Cancelar
+            </Button>
+            <Button type='submit' color='success' variant='contained'>
+              Actualizar
+            </Button>
+          </DialogActions>
+        </Box>
+      </DialogContent>
+    </Dialog>
   );
 };
 

@@ -18,6 +18,8 @@ import {
   FormControl,
   Select,
   MenuItem,
+  useTheme,
+  useMediaQuery,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -40,8 +42,11 @@ const Fixture: React.FC = () => {
   const [idToFetch, setIdToFetch] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [selectedMatchday, setSelectedMatchday] = useState(1);
-  const { matches, isLoadingMatches, isErrorMatches, deleteMatch } = useMatches();
+  const { matches, isLoadingMatches, isErrorMatches, deleteMatch } =
+    useMatches();
   const { teams, isLoadingTeams, isErrorTeams } = useTeams();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const handleDelete = async (id: string) => {
     setOpen(true);
@@ -58,7 +63,7 @@ const Fixture: React.FC = () => {
   const confirmDelete = async () => {
     if (idToFetch) {
       try {
-        await deleteMatch(idToFetch)
+        await deleteMatch(idToFetch);
       } catch (error) {
         if (error instanceof Error) {
           setError(error.message);
@@ -118,7 +123,7 @@ const Fixture: React.FC = () => {
       {message && <Alert severity='success'>{message}</Alert>}
       <Box sx={{ justifyItems: 'center' }}>
         <Typography
-          variant='h4'
+          variant={isMobile ? 'h6' : 'h4'}
           gutterBottom
           align='center'
           color='primary.contrastText'
@@ -143,6 +148,7 @@ const Fixture: React.FC = () => {
               value={selectedMatchday}
               onChange={(e) => setSelectedMatchday(Number(e.target.value))}
               displayEmpty
+              size='small'
               MenuProps={{
                 PaperProps: {
                   sx: {
@@ -207,7 +213,7 @@ const Fixture: React.FC = () => {
         )}
       </Box>
       {filteredMatches.length === 0 && (
-        <Typography variant='h6' align='center' color='primary.contrastText'>
+        <Typography variant={isMobile ? 'subtitle1' : 'h6'} align='center' color='primary.contrastText'>
           Aún no hay partidos
         </Typography>
       )}
