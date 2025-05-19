@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import mongoose from 'mongoose';
 
-const zObjectId = z
+export const zObjectId = z
   .string()
   .length(24)
   .refine((val) => mongoose.isValidObjectId(val), {

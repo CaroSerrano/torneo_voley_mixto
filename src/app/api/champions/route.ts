@@ -33,6 +33,8 @@ export async function POST(req: NextRequest) {
     const data = await req.json();
     const parsedData = createChampionDataDto.parse(data);
     const newChampion = await addChampion(parsedData);
+    console.log(newChampion);
+    
     return NextResponse.json(newChampion);
   } catch (error) {
     console.error(error);

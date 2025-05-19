@@ -1,8 +1,9 @@
 import { z } from 'zod';
 import { Tournament } from './types';
+import { zObjectId } from '../matches/validations';
 
 export const createChampionDataDto = z.object({
-  team: z.string().min(1),
+  team: zObjectId,
   tournament: z.nativeEnum(Tournament),
   year: z.number().min(1900).max(new Date().getFullYear()),
 });

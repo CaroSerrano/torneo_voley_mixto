@@ -1,10 +1,14 @@
-import { Schema, model, models } from 'mongoose';
-import { Tournament, Champions } from '@/features/champions/types';
+import { Schema, model, models, Types } from 'mongoose';
+import { Tournament } from '@/features/champions/types';
+export interface ChampionDocument extends Document {
+  team: Types.ObjectId;
+  tournament: Tournament;
+  year: number;
+}
 
-
-export const championsSchema = new Schema<Champions>(
+export const championsSchema = new Schema<ChampionDocument>(
   {
-    team: { type: String, required: true },
+    team: { type: Schema.Types.ObjectId, ref: 'Team' },
     tournament: { type: String, enum: Object.values(Tournament) },
     year: {
       type: Number,
@@ -16,4 +20,4 @@ export const championsSchema = new Schema<Champions>(
   { timestamps: true }
 );
 
-export default models.Champion || model<Champions>('Champion', championsSchema);
+export default models.Champion || model<ChampionDocument>('Champion', championsSchema);

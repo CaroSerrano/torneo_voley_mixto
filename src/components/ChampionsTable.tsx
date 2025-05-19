@@ -4,6 +4,7 @@ import { useSession } from 'next-auth/react';
 
 import {
   Alert,
+  Avatar,
   Box,
   CircularProgress,
   Dialog,
@@ -65,7 +66,7 @@ const ChampionsTable: React.FC = () => {
     setIdToDelete(null);
   };
 
-    const cancelUpdate = () => {
+  const cancelUpdate = () => {
     setOpenUpdateModal(false);
     setChampionToEdit(null);
   };
@@ -167,7 +168,18 @@ const ChampionsTable: React.FC = () => {
           <TableBody>
             {champions.map((champion: ReturnedChampion) => (
               <TableRow key={champion._id}>
-                <TableCell>{champion.team}</TableCell>
+                <TableCell>
+                  <Box display='flex' alignItems='center' gap={1}>
+                    {champion.team.badge && (
+                      <Avatar
+                        src={champion.team.badge}
+                        alt={champion.team.name}
+                        sx={{ width: 24, height: 24, bgcolor: '#d4d8da' }}
+                      />
+                    )}
+                    <span>{champion.team.name}</span>
+                  </Box>
+                </TableCell>
                 <TableCell>{champion.tournament}</TableCell>
                 <TableCell>{champion.year}</TableCell>
                 {isLoggedIn && (

@@ -89,7 +89,7 @@ const AddChampionForm: React.FC<AddChampionFormProps> = ({
           }}
         >
           {teams.map((t) => (
-            <MenuItem value={t.name} key={t._id}>
+            <MenuItem value={t._id} key={t._id}>
               {t.name}
             </MenuItem>
           ))}
