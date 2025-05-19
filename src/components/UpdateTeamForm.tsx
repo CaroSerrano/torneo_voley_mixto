@@ -113,8 +113,8 @@ const UpdateTeamForm: React.FC<UpdateTeamFormProps> = ({
               slotProps: { paper: { sx: { backgroundColor: '#00313e' } } },
             }}
           >
-            <MenuItem value='ACTIVE'>Active</MenuItem>
-            <MenuItem value='INACTIVE'>Inactive</MenuItem>
+            <MenuItem value='ACTIVE'>Activo</MenuItem>
+            <MenuItem value='INACTIVE'>Inactivo</MenuItem>
           </Select>
 
           <DialogActions>

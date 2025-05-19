@@ -126,6 +126,7 @@ function Bracket() {
         width: 'auto',
         px: 2,
         mx: 'auto',
+        mb: 10
       }}
     >
       <Box

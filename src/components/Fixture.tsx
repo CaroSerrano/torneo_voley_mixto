@@ -1,14 +1,12 @@
 'use client';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
-import { ITeam } from '@/features/teams/types';
 import { ReturnedMatch } from '@/features/matches/types';
 import {
   Card,
   CardContent,
   Grid,
   Typography,
-  Avatar,
   Box,
   Button,
   Alert,
@@ -26,6 +24,7 @@ import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import AddMatchForm from './AddMatchForm';
 import UpdateMatchForm from './UpdateMatchForm';
+import TeamDisplay from './FixtureTeamDisplay';
 import useMatches from '@/hooks/useMatches';
 import useTeams from '@/hooks/useTeams';
 import DeleteModal from './DeleteModal';
@@ -324,32 +323,5 @@ const Fixture: React.FC = () => {
     </Box>
   );
 };
-
-function TeamDisplay({
-  team,
-  reverse = false,
-}: {
-  team: ITeam;
-  reverse?: boolean;
-}) {
-  return (
-    <Box
-      display='flex'
-      alignItems='center'
-      flexDirection={reverse ? 'row-reverse' : 'row'}
-    >
-      <Avatar
-        src={team.badge}
-        alt={team.name}
-        sx={{ width: 40, height: 40, mx: 1, bgcolor: '#d4d8da' }}
-      >
-        {team.name?.charAt(0).toUpperCase()}
-      </Avatar>
-      <Typography variant='subtitle1' sx={{ mx: 1 }}>
-        {team.name}
-      </Typography>
-    </Box>
-  );
-}
 
 export default Fixture;
