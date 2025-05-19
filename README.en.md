@@ -48,12 +48,11 @@ This app is designed to be deployed on [Vercel](https://vercel.com/) and works a
 
 ---
 
-## 👩‍💻 About Me
-
-I'm a autodidact web developer. This project is part of my portfolio, where I apply good development practices, secure authentication, robust data validation, and full ownership of the development process.
-
----
 
 ## 📬 Contact
 
-If you'd like to know more about this project or about me, feel free to reach out via [LinkedIn](#) or check out more of my work on [GitHub](#).
+If you'd like to know more about this project or about me, feel free to reach out via [LinkedIn](https://www.linkedin.com/in/paula-carolina-serrano) or check out more of my work on [GitHub](https://github.com/CaroSerrano).
+
+---
+
+This project is licensed under CC BY-NC 4.0. See [LICENSE.md](./LICENSE.md) for more details.

@@ -48,13 +48,12 @@ Esta aplicación está diseñada para ser desplegada en [Vercel](https://vercel.
 
 ---
 
-## 👩‍💻 Sobre mí
+## 📬 Contacto
 
-Soy desarrolladora de aplicaciones web con formación autodidacta y esta app forma parte de mis proyectos personales donde aplico buenas prácticas de desarrollo, validación de datos, autenticación segura y manejo completo de una aplicación de principio a fin.
+Si te interesa saber más sobre el proyecto o sobre mí, podés contactarme a través de mi [LinkedIn](https://www.linkedin.com/in/paula-carolina-serrano) o revisar otros proyectos en mi [GitHub](https://github.com/CaroSerrano).
 
 ---
 
-## 📬 Contacto
+Este proyecto está licenciado bajo CC BY-NC 4.0. Ver [LICENSE.md](./LICENSE.md) para más detalles.
 
-Si te interesa saber más sobre el proyecto o sobre mí, podés contactarme a través de mi [LinkedIn](https://www.linkedin.com/in/paula-carolina-serrano/) o revisar otros proyectos en mi [GitHub](https://github.com/CaroSerrano).
 
