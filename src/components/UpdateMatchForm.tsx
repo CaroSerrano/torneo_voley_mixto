@@ -4,14 +4,18 @@ import {
   Alert,
   Box,
   Button,
+  Dialog,
   DialogActions,
   DialogContent,
+  DialogTitle,
   TextField,
 } from '@mui/material';
 import { ReturnedMatch } from '@/features/matches/types';
 import useMatches from '@/hooks/useMatches';
+import toDatetimeLocalString from '@/utils/toDatetimeLocalString';
 
 interface UpdateMatchFormProps {
+  open: boolean;
   match: ReturnedMatch;
   cancelUpdate: () => void;
   setMessage: (message: string | null) => void;
@@ -20,10 +24,11 @@ interface UpdateMatchFormProps {
 interface FormData {
   teamAscore: number;
   teamBscore: number;
-  date: Date;
+  date: string;
 }
 
 const UpdateMatchForm: React.FC<UpdateMatchFormProps> = ({
+  open,
   match,
   cancelUpdate,
   setMessage,
@@ -36,16 +41,18 @@ const UpdateMatchForm: React.FC<UpdateMatchFormProps> = ({
     defaultValues: {
       teamAscore: match.teamAscore,
       teamBscore: match.teamBscore,
-      date: new Date(match.date),
+      date: match.date ? toDatetimeLocalString(match.date) : '',
     },
   });
   const [error, setError] = useState<string | null>(null);
   const { updateMatch } = useMatches();
 
   const onSubmit = async (data: FormData) => {
-    console.log(data);
+    console.log('Antes de transformar:', data);
     try {
-      await updateMatch(match._id, data);
+      const payload = { ...data, date: new Date(data.date) };
+      console.log('Después de transformar:', payload);
+      await updateMatch(match._id, payload);
       setMessage('Partido actualizado correctamente');
       cancelUpdate();
       setTimeout(() => {
@@ -58,59 +65,67 @@ const UpdateMatchForm: React.FC<UpdateMatchFormProps> = ({
           setError(null);
         }, 3000);
       }
-      cancelUpdate();
     }
+    cancelUpdate();
   };
 
   return (
-    <DialogContent sx={{ bgcolor: '#00313e' }}>
-      {error && <Alert severity='error'>{error}</Alert>}
-      <Box component='form' onSubmit={handleSubmit(onSubmit)} noValidate>
-        <TextField
-          label={`Puntaje de ${match.teamA.name}`}
-          type='number'
-          fullWidth
-          margin='normal'
-          sx={{ label: { color: 'white' } }}
-          {...register('teamAscore', {
-            valueAsNumber: true,
-          })}
-          error={!!errors.teamAscore}
-          helperText={errors.teamAscore?.message}
-        />
+    <Dialog open={open} onClose={cancelUpdate}>
+      <DialogTitle sx={{ bgcolor: '#134755' }}>Actualizar partido</DialogTitle>
 
-        <TextField
-          label={`Puntaje de ${match.teamB.name}`}
-          type='number'
-          fullWidth
-          margin='normal'
-          {...register('teamBscore', {
-            valueAsNumber: true,
-          })}
-          error={!!errors.teamBscore}
-          helperText={errors.teamBscore?.message}
-        />
+      <DialogContent sx={{ bgcolor: '#00313e' }}>
+        {error && <Alert severity='error'>{error}</Alert>}
+        <Box component='form' onSubmit={handleSubmit(onSubmit)} noValidate>
+          <TextField
+            label={`Puntaje de ${match.teamA.name}`}
+            type='number'
+            fullWidth
+            margin='normal'
+            sx={{ label: { color: 'white' } }}
+            {...register('teamAscore', {
+              valueAsNumber: true,
+            })}
+            error={!!errors.teamAscore}
+            helperText={errors.teamAscore?.message}
+          />
 
-        <TextField
-          type='datetime-local'
-          label='Fecha y hora del encuentro'
-          fullWidth
-          margin='normal'
-          {...register('date')}
-          error={!!errors.date}
-          helperText={errors.date?.message}
-        />
+          <TextField
+            label={`Puntaje de ${match.teamB.name}`}
+            type='number'
+            fullWidth
+            margin='normal'
+            {...register('teamBscore', {
+              valueAsNumber: true,
+            })}
+            error={!!errors.teamBscore}
+            helperText={errors.teamBscore?.message}
+          />
 
-        <DialogActions>
-          <Button color='secondary' variant='contained' onClick={cancelUpdate}>
-            Cancelar
-          </Button>
-          <Button type='submit' color='success' variant='contained'>
-            Actualizar
-          </Button>
-        </DialogActions>
-      </Box>
-    </DialogContent>
+          <TextField
+            type='datetime-local'
+            label='Fecha y hora del encuentro'
+            fullWidth
+            margin='normal'
+            {...register('date')}
+            error={!!errors.date}
+            helperText={errors.date?.message}
+          />
+
+          <DialogActions>
+            <Button
+              color='secondary'
+              variant='contained'
+              onClick={cancelUpdate}
+            >
+              Cancelar
+            </Button>
+            <Button type='submit' color='success' variant='contained'>
+              Actualizar
+            </Button>
+          </DialogActions>
+        </Box>
+      </DialogContent>
+    </Dialog>
   );
 };
 

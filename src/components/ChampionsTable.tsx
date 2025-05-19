@@ -170,13 +170,13 @@ const ChampionsTable: React.FC = () => {
               <TableRow key={champion._id}>
                 <TableCell>
                   <Box display='flex' alignItems='center' gap={1}>
-                    {champion.team.badge && (
-                      <Avatar
-                        src={champion.team.badge}
-                        alt={champion.team.name}
-                        sx={{ width: 28, height: 28, bgcolor: '#d4d8da' }}
-                      />
-                    )}
+                    <Avatar
+                      src={champion.team.badge}
+                      alt={champion.team.name}
+                      sx={{ width: 28, height: 28, bgcolor: '#d4d8da' }}
+                    >
+                      {champion.team.name?.charAt(0).toUpperCase()}
+                    </Avatar>
                     <span>{champion.team.name}</span>
                   </Box>
                 </TableCell>
@@ -234,7 +234,7 @@ const ChampionsTable: React.FC = () => {
       )}
       <DeleteModal
         open={openDeleteModal}
-        cancelDelete={cancelDelete}
+        cancelDelete={() => cancelDelete()}
         confirmMessage='Esta acción eliminará definitivamente este campeón'
         confirmDelete={confirmDelete}
       />

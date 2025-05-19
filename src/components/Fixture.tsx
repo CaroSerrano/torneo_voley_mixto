@@ -10,8 +10,6 @@ import {
   Typography,
   Avatar,
   Box,
-  Dialog,
-  DialogTitle,
   Button,
   Alert,
   CircularProgress,
@@ -36,10 +34,13 @@ const Fixture: React.FC = () => {
   const { data: session } = useSession();
   const isLoggedIn = !!session;
   const [open, setOpen] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [addModalOpen, setAddModalOpen] = useState(false);
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [idToFetch, setIdToFetch] = useState<string | null>(null);
+  const [idToDelete, setIdToDelete] = useState<string | null>(null);
+  const [matchToUpdate, setMatchToUpdate] = useState<ReturnedMatch | null>(
+    null
+  );
   const [message, setMessage] = useState<string | null>(null);
   const [selectedMatchday, setSelectedMatchday] = useState(1);
   const { matches, isLoadingMatches, isErrorMatches, deleteMatch } =
@@ -48,9 +49,17 @@ const Fixture: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
+  const handleUpdate = async (id: string) => {
+    const matchFound = matches?.find((m) => m._id === id);
+    if (matchFound) {
+      setMatchToUpdate(matchFound);
+      setUpdateModalOpen(true);
+    }
+  };
+
   const handleDelete = async (id: string) => {
     setOpen(true);
-    setIdToFetch(id);
+    setIdToDelete(id);
   };
 
   const handlePrevMatchday = () => {
@@ -61,9 +70,9 @@ const Fixture: React.FC = () => {
     if (selectedMatchday < 9) setSelectedMatchday((prev) => prev + 1);
   };
   const confirmDelete = async () => {
-    if (idToFetch) {
+    if (idToDelete) {
       try {
-        await deleteMatch(idToFetch);
+        await deleteMatch(idToDelete);
       } catch (error) {
         if (error instanceof Error) {
           setError(error.message);
@@ -74,22 +83,21 @@ const Fixture: React.FC = () => {
       }
     }
     setOpen(false);
-    setIdToFetch(null);
+    setIdToDelete(null);
   };
 
   const cancelDelete = () => {
     setOpen(false);
-    setIdToFetch(null);
+    setIdToDelete(null);
   };
 
   const cancelUpdate = () => {
     setUpdateModalOpen(false);
-    setIdToFetch(null);
+    setMatchToUpdate(null);
   };
 
   const cancelAddMatch = () => {
-    setModalOpen(false);
-    setIdToFetch(null);
+    setAddModalOpen(false);
   };
 
   if (isLoadingMatches || isLoadingTeams) {
@@ -206,14 +214,18 @@ const Fixture: React.FC = () => {
             color='secondary'
             variant='contained'
             sx={{ color: 'secondary.contrastText', my: 2 }}
-            onClick={() => setModalOpen(true)}
+            onClick={() => setAddModalOpen(true)}
           >
             Agregar partido
           </Button>
         )}
       </Box>
       {filteredMatches.length === 0 && (
-        <Typography variant={isMobile ? 'subtitle1' : 'h6'} align='center' color='primary.contrastText'>
+        <Typography
+          variant={isMobile ? 'subtitle1' : 'h6'}
+          align='center'
+          color='primary.contrastText'
+        >
           Aún no hay partidos
         </Typography>
       )}
@@ -240,7 +252,7 @@ const Fixture: React.FC = () => {
                     sx={{ position: 'absolute', top: 8, right: 8, zIndex: 1 }}
                   >
                     <IconButton
-                      onClick={() => setUpdateModalOpen(true)}
+                      onClick={() => handleUpdate(match._id)}
                       size='small'
                     >
                       <EditIcon fontSize='small' sx={{ color: '#cddde2' }} />
@@ -255,7 +267,7 @@ const Fixture: React.FC = () => {
                 )}
                 <CardContent>
                   <Typography variant='subtitle1' gutterBottom>
-                    {new Date(match.date).toLocaleString('es-AR', {
+                    {match.date ? new Date(match.date).toLocaleString('es-AR', {
                       weekday: 'long',
                       year: 'numeric',
                       month: 'long',
@@ -263,7 +275,7 @@ const Fixture: React.FC = () => {
                       hour12: false,
                       hour: '2-digit',
                       minute: '2-digit',
-                    })}
+                    }) : 'A confirmar'}
                   </Typography>
                   <Grid
                     container
@@ -285,16 +297,6 @@ const Fixture: React.FC = () => {
                   </Grid>
                 </CardContent>
               </Card>
-              <Dialog open={updateModalOpen} onClose={cancelUpdate}>
-                <DialogTitle sx={{ bgcolor: '#134755' }}>
-                  Actualizar partido
-                </DialogTitle>
-                <UpdateMatchForm
-                  match={match}
-                  cancelUpdate={cancelUpdate}
-                  setMessage={setMessage}
-                />
-              </Dialog>
             </Grid>
           ))}
         </Grid>
@@ -305,14 +307,20 @@ const Fixture: React.FC = () => {
         confirmMessage='Esta acción eliminará el partido definitivamente'
         confirmDelete={confirmDelete}
       />
-      <Dialog open={modalOpen} onClose={cancelAddMatch}>
-        <DialogTitle sx={{ bgcolor: '#134755' }}>Añadir partido</DialogTitle>
-        <AddMatchForm
-          teams={teams}
-          cancelAddMatch={cancelAddMatch}
+      <AddMatchForm
+        open={addModalOpen}
+        teams={teams}
+        cancelAddMatch={cancelAddMatch}
+        setMessage={setMessage}
+      />
+      {matchToUpdate && (
+        <UpdateMatchForm
+          open={updateModalOpen}
+          match={matchToUpdate}
+          cancelUpdate={cancelUpdate}
           setMessage={setMessage}
         />
-      </Dialog>
+      )}
     </Box>
   );
 };
@@ -334,7 +342,9 @@ function TeamDisplay({
         src={team.badge}
         alt={team.name}
         sx={{ width: 40, height: 40, mx: 1, bgcolor: '#d4d8da' }}
-      />
+      >
+        {team.name?.charAt(0).toUpperCase()}
+      </Avatar>
       <Typography variant='subtitle1' sx={{ mx: 1 }}>
         {team.name}
       </Typography>

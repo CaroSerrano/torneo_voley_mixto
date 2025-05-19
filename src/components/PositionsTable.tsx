@@ -49,6 +49,8 @@ const PositionsTable: React.FC = () => {
   const handleEdit = (id: string) => {
     const team = teams?.find((t) => t._id === id);
     if (team) {
+      console.log('Team to update', teamToUpdate);
+
       setTeamToUpdate(team);
       setModalOpen(true);
     }
@@ -79,6 +81,7 @@ const PositionsTable: React.FC = () => {
 
   const cancelUpdate = () => {
     setModalOpen(false);
+    setTeamToUpdate(null);
   };
 
   if (isLoadingTeams) {
@@ -181,13 +184,13 @@ const PositionsTable: React.FC = () => {
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>
                   <Box display='flex' alignItems='center' gap={1}>
-                    {team.badge && (
-                      <Avatar
-                        src={team.badge}
-                        alt={team.name}
-                        sx={{ width: 28, height: 28, bgcolor: '#d4d8da' }}
-                      />
-                    )}
+                    <Avatar
+                      src={team.badge}
+                      alt={team.name}
+                      sx={{ width: 28, height: 28, bgcolor: '#d4d8da' }}
+                    >
+                      {team.name?.charAt(0).toUpperCase()}
+                    </Avatar>
                     <span>{team.name}</span>
                   </Box>
                 </TableCell>
@@ -225,7 +228,7 @@ const PositionsTable: React.FC = () => {
         </Table>
         <DeleteModal
           open={open}
-          cancelDelete={cancelDelete}
+          cancelDelete={() => cancelDelete()}
           confirmMessage='Esta acción eliminará el equipo definitivamente'
           confirmDelete={confirmDelete}
         />

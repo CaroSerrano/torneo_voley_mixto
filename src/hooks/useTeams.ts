@@ -13,7 +13,7 @@ function useTeams() {
     }
   );
 
-  const createTeam = async (data: CreateTeamData) => {
+  const createTeam = async (data: CreateTeamData): Promise<void> => {
     try {
       const res = await fetch(endpoint, {
         method: 'POST',
@@ -31,7 +31,7 @@ function useTeams() {
   const updateTeam = async (
     id: string,
     updatedData: Partial<CreateTeamData>
-  ) => {
+  ): Promise<void> => {
     try {
       const res = await fetch(`${endpoint}/${id}`, {
         method: 'PATCH',
@@ -46,7 +46,7 @@ function useTeams() {
     }
   };
 
-  const deleteTeam = async (id: string) => {
+  const deleteTeam = async (id: string): Promise<void> => {
     try {
       const res = await fetch(`${endpoint}/${id}`, {
         method: 'DELETE',

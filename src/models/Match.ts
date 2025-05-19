@@ -6,7 +6,7 @@ export interface MatchDocument extends Document {
   teamAscore?: number;
   teamB: Types.ObjectId;
   teamBscore?: number;
-  date: Date;
+  date?: Date;
   matchday:number;
 }
 
@@ -15,7 +15,7 @@ const MatchSchema = new Schema<MatchDocument>({
   teamAscore: { type: Number, default: 0 },
   teamB: { type: Schema.Types.ObjectId, ref: 'Team' },
   teamBscore: { type: Number, default: 0 },
-  date: { type: Date, required: true },
+  date: { type: Date },
   matchday: {type: Number, required: true}
 });
 

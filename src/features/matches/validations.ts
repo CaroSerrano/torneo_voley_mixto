@@ -13,20 +13,23 @@ export const createMatchDataDto = z.object({
   teamAscore: z.number().int().optional(),
   teamB: zObjectId,
   teamBscore: z.number().int().optional(),
-  date: z.coerce.date(),
+  date: z
+  .string()
+  .optional()
+  .refine((val) => {
+    if (!val) return true; // Si no hay valor, es válido (opcional)
+    const d = new Date(val);
+    return !isNaN(d.getTime()); // Si hay valor, debe ser una fecha válida
+  }, {
+    message: "Invalid date format",
+  })
+  .transform((val) => (val ? new Date(val) : undefined)),
   matchday: z.number().int(),
 });
 
 export type CreateMatchData = z.infer<typeof createMatchDataDto>;
 
 export const updateMatchDataDto = createMatchDataDto
-  .omit({ teamA: true, teamB: true, date: true })
-  .extend({
-    teamA: zObjectId.optional(),
-    teamB: zObjectId.optional(),
-    date: z.coerce.date().optional(),
-    matchday: z.number().int().optional(),
-  })
   .partial();
 
 export type UpdateMatchData = z.infer<typeof updateMatchDataDto>;

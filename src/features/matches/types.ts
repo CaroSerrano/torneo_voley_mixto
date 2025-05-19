@@ -5,7 +5,7 @@ export interface IMatch {
   teamAscore: number;
   teamB: ReturnedTeam;
   teamBscore: number;
-  date: string;
+  date?: Date;
   matchday: number;
   createdAt: string;
   updatedAt: string;
