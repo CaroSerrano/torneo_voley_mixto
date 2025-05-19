@@ -15,49 +15,34 @@ function useChampions() {
   );
 
   const createChampion = async (newChampion: IChampions) => {
-    try {
       const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newChampion),
       });
-
       if (!res.ok) throw new Error('Error al crear el campeón');
       await mutate(); // Refresca la caché
-    } catch (err) {
-      console.error(err);
-    }
   };
 
   const updateChampion = async (
     id: string,
     updatedData: UpdateChampionData
   ) => {
-    try {
       const res = await fetch(`${endpoint}/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedData),
       });
-
       if (!res.ok) throw new Error('Error al actualizar el campeón');
       await mutate(); // Refresca la caché
-    } catch (err) {
-      console.error(err);
-    }
   };
 
   const deleteChampion = async (id: string) => {
-    try {
       const res = await fetch(`${endpoint}/${id}`, {
         method: 'DELETE',
       });
-
       if (!res.ok) throw new Error('Error al eliminar el campeón');
       await mutate(); // Refresca la caché
-    } catch (err) {
-      console.error(err);
-    }
   };
 
   return {

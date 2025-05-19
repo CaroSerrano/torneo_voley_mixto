@@ -9,7 +9,6 @@ export async function GET() {
     const teams = await loadTeams();
     return NextResponse.json(teams);
   } catch (error) {
-    console.error(error);
     if (error instanceof Error) {
       return NextResponse.json(error.message, { status: 400 });
     }
@@ -32,7 +31,6 @@ export async function POST(req: NextRequest) {
     const newTeam = await addTeam(parsedData);
     return NextResponse.json(newTeam);
   } catch (error) {
-    console.error(error);
     if (error instanceof ZodError) {
       return NextResponse.json(error.issues, { status: 400 });
     }

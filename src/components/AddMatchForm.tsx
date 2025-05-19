@@ -62,7 +62,6 @@ const AddMatchForm: React.FC<AddMatchFormProps> = ({
   const { createMatch } = useMatches();
 
   const onSubmit = async (data: FormData) => {
-    console.log('Antes de transformar:', data);
     try {
       const payload: CreateMatchData = {
         teamA: data.teamA,
@@ -72,7 +71,6 @@ const AddMatchForm: React.FC<AddMatchFormProps> = ({
         teamBscore: data.teamBscore,
         ...(data.date ? { date: new Date(data.date) } : {}),
       };
-      console.log('Después de transformar:', payload);
       setIsLoading(true);
       await createMatch(payload);
       setIsLoading(false);

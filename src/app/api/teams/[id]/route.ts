@@ -21,7 +21,6 @@ export async function DELETE(
     await deleteTeam(teamId);
     return NextResponse.json('Equipo eliminado correctamente');
   } catch (error) {
-    console.error(error);
     if (error instanceof Error) {
       return NextResponse.json(error.message, { status: 400 });
     }
@@ -48,7 +47,6 @@ export async function PATCH(
     const updatedTeam = await updateTeam(teamId, parsedData);
     return NextResponse.json(updatedTeam);
   } catch (error) {
-    console.error(error);
     if (error instanceof ZodError) {
       return NextResponse.json(error.issues, { status: 400 });
     }

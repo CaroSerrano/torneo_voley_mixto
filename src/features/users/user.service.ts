@@ -15,9 +15,7 @@ export async function getUser(
   filter: Record<string, string>
 ): Promise<ReturnedUser | null> {
   await connectDB();
-  const user = await User.findOne(filter);
-  console.log("user", user);
-  
+  const user = await User.findOne(filter);  
   return user ? user : null;
 }
 

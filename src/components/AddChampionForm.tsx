@@ -39,7 +39,6 @@ const AddChampionForm: React.FC<AddChampionFormProps> = ({
   const { createChampion } = useChampions();
 
   const onSubmit = async (data: IChampions) => {
-    console.log(data);
     try {
       setIsLoading(true);
       createChampion(data);

@@ -54,11 +54,9 @@ const UpdateChampionForm: React.FC<UpdateChampionFormProps> = ({
   const { updateChampion } = useChampions();
 
   const onSubmit = async (data: UpdateChampionData) => {
-    console.log(data);
     try {
       setIsLoading(true);
-      const res = updateChampion(champion._id, data);
-      console.log(res);
+      await updateChampion(champion._id, data);
       setIsLoading(false);
       setMessage('Campeón actualizado correctamente');
       setTimeout(() => {

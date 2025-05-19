@@ -14,7 +14,6 @@ function useTeams() {
   );
 
   const createTeam = async (data: CreateTeamData): Promise<void> => {
-    try {
       const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -23,16 +22,12 @@ function useTeams() {
 
       if (!res.ok) throw new Error('Error al crear el equipo');
       await mutate(); // Refresca la caché
-    } catch (err) {
-      console.error(err);
-    }
   };
 
   const updateTeam = async (
     id: string,
     updatedData: Partial<CreateTeamData>
   ): Promise<void> => {
-    try {
       const res = await fetch(`${endpoint}/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -40,23 +35,16 @@ function useTeams() {
       });
 
       if (!res.ok) throw new Error('Error al actualizar el equipo');
-      await mutate(); // Refresca la caché
-    } catch (err) {
-      console.error(err);
-    }
+      await mutate();
   };
 
   const deleteTeam = async (id: string): Promise<void> => {
-    try {
       const res = await fetch(`${endpoint}/${id}`, {
         method: 'DELETE',
       });
 
       if (!res.ok) throw new Error('Error al eliminar el equipo');
-      await mutate(); // Refresca la caché
-    } catch (err) {
-      console.error(err);
-    }
+      await mutate();
   };
 
   return {

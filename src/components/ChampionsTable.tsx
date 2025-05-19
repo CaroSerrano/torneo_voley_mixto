@@ -110,8 +110,23 @@ const ChampionsTable: React.FC = () => {
   }
   return (
     <Box px={{ xs: 2, sm: 4, md: 0 }}>
-      {error && <Alert severity='error'>{error}</Alert>}
-      {message && <Alert severity='success'>{message}</Alert>}
+      {error && (
+        <Box display='flex' justifyContent='center' mb={2}>
+          <Alert severity='error' sx={{ maxWidth: 400, width: 'fit-content' }}>
+            {error}
+          </Alert>
+        </Box>
+      )}
+      {message && (
+        <Box display='flex' justifyContent='center' mb={2}>
+          <Alert
+            severity='success'
+            sx={{ maxWidth: 400, width: 'fit-content' }}
+          >
+            {message}
+          </Alert>
+        </Box>
+      )}
       <TableContainer
         component={Paper}
         sx={{

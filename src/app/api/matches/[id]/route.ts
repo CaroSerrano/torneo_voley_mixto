@@ -21,7 +21,6 @@ export async function DELETE(
     await deleteMatch(matchId);
     return NextResponse.json('Partido eliminado correctamente');
   } catch (error) {
-    console.error(error);
     if (error instanceof Error) {
       return NextResponse.json(error.message, { status: 400 });
     }
@@ -48,7 +47,6 @@ export async function PATCH(
     const updatedMatch = await updateMatch(matchId, parsedData);
     return NextResponse.json(updatedMatch);
   } catch (error) {
-    console.error(error);
     if (error instanceof ZodError) {
       return NextResponse.json(error.issues, { status: 400 });
     }

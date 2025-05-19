@@ -21,7 +21,6 @@ export async function DELETE(
     await deleteBracket(bracketId);
     return NextResponse.json('Llave eliminada correctamente');
   } catch (error) {
-    console.error(error);
     if (error instanceof Error) {
       return NextResponse.json(error.message, { status: 400 });
     }
@@ -48,7 +47,6 @@ export async function PATCH(
     const updatedBracket = await updateBracket(bracketId, parsedData);
     return NextResponse.json(updatedBracket);
   } catch (error) {
-    console.error(error);
     if (error instanceof ZodError) {
       return NextResponse.json(error.issues, { status: 400 });
     }

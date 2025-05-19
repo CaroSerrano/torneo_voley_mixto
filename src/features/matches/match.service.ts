@@ -18,9 +18,7 @@ export async function addMatch(
     ...matchData,
     teamA: new mongoose.Types.ObjectId(matchData.teamA),
     teamB: new mongoose.Types.ObjectId(matchData.teamB),
-  };
-  console.log(parsedData);
-  
+  };  
   await connectDB();
   const addedMatch = await Match.create(parsedData);
   return addedMatch;

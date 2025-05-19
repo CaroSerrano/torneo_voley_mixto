@@ -21,6 +21,7 @@ function Bracket() {
   const isLoggedIn = !!session;
 
   const [selections, setSelections] = useState<Record<number, string>>({});
+  const [error, setError] = useState<string | null>(null);
   useEffect(() => {
     if (bracket && bracket.length > 0) {
       const initialSelections: Record<number, string> = {};
@@ -41,20 +42,20 @@ function Bracket() {
 
       try {
         if (existing) {
-          // Actualizar el bracket existente
           await updateBracket(existing._id, {
             position: index,
             teamName: selectedTeam,
           });
         } else {
-          // Crear un nuevo bracket
           await createBracket({
             position: index,
             teamName: selectedTeam,
           });
         }
       } catch (error) {
-        console.error('Error al guardar el bracket:', error);
+        if (error instanceof Error) {
+          setError(error.message);
+        }
       }
     };
 
@@ -64,6 +65,16 @@ function Bracket() {
 
     return (
       <Box key={index} display='flex' alignItems='center' mt={marginTop} mb={1}>
+        {error && (
+          <Box display='flex' justifyContent='center' mb={2}>
+            <Alert
+              severity='error'
+              sx={{ maxWidth: 400, width: 'fit-content' }}
+            >
+              {error}
+            </Alert>
+          </Box>
+        )}
         {isLoggedIn ? (
           <FormControl size='small' sx={{ minWidth: 200 }}>
             <Select
@@ -122,11 +133,11 @@ function Bracket() {
     <Box
       sx={{
         overflowX: 'auto',
-        maxWidth: 'calc(100vw - 40px)', // Siempre deja 20px de margen a cada lado visible
+        maxWidth: 'calc(100vw - 40px)',
         width: 'auto',
         px: 2,
         mx: 'auto',
-        mb: 10
+        mb: 10,
       }}
     >
       <Box
@@ -137,7 +148,7 @@ function Bracket() {
         gap={4}
         p={2}
         mt={20}
-        sx={{ minWidth: 900 }} // ajustar según el ancho mínimo que ocupen los selects juntos
+        sx={{ minWidth: 900 }}
       >
         {/* Cuartos de final: 8 equipos (0-7) */}
         <Box display='flex' flexDirection='column' alignItems='center'>

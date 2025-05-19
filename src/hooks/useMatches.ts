@@ -13,7 +13,6 @@ function useMatches() {
     }
   );
   const createMatch = async (data: CreateMatchData) => {
-      try {
         const res = await fetch(endpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -22,16 +21,12 @@ function useMatches() {
   
         if (!res.ok) throw new Error('Error al crear el partido');
         await mutate(); // Refresca la caché
-      } catch (err) {
-        console.error(err);
-      }
     };
   
     const updateMatch = async (
       id: string,
       updatedData: Partial<CreateMatchData>
     ) => {
-      try {
         const res = await fetch(`${endpoint}/${id}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
@@ -39,23 +34,16 @@ function useMatches() {
         });
   
         if (!res.ok) throw new Error('Error al actualizar el partido');
-        await mutate(); // Refresca la caché
-      } catch (err) {
-        console.error(err);
-      }
+        await mutate();
     };
   
     const deleteMatch = async (id: string) => {
-      try {
         const res = await fetch(`${endpoint}/${id}`, {
           method: 'DELETE',
         });
   
         if (!res.ok) throw new Error('Error al eliminar el partido');
-        await mutate(); // Refresca la caché
-      } catch (err) {
-        console.error(err);
-      }
+        await mutate();
     };
 
   return {

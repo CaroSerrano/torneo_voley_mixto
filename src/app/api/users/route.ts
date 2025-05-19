@@ -9,7 +9,6 @@ export async function GET() {
     const users = await loadUsers();
     return NextResponse.json(users);
   } catch (error) {
-    console.error(error);
     if (error instanceof Error) {
       return NextResponse.json(error.message, { status: 400 });
     }
@@ -38,7 +37,6 @@ export async function POST(req: NextRequest) {
     const { password, ...userWithoutPassword } = newUser;
     return NextResponse.json(userWithoutPassword);
   } catch (error) {
-    console.error(error);
     if (error instanceof ZodError) {
       return NextResponse.json(error.issues, { status: 400 });
     }

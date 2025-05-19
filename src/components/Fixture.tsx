@@ -126,8 +126,23 @@ const Fixture: React.FC = () => {
 
   return (
     <Box sx={{ p: 2, mb: 5 }}>
-      {error && <Alert severity='error'>{error}</Alert>}
-      {message && <Alert severity='success'>{message}</Alert>}
+      {error && (
+        <Box display='flex' justifyContent='center' mb={2}>
+          <Alert severity='error' sx={{ maxWidth: 400, width: 'fit-content' }}>
+            {error}
+          </Alert>
+        </Box>
+      )}
+      {message && (
+        <Box display='flex' justifyContent='center' mb={2}>
+          <Alert
+            severity='success'
+            sx={{ maxWidth: 400, width: 'fit-content' }}
+          >
+            {message}
+          </Alert>
+        </Box>
+      )}
       <Box sx={{ justifyItems: 'center' }}>
         <Typography
           variant={isMobile ? 'h6' : 'h4'}
@@ -266,15 +281,17 @@ const Fixture: React.FC = () => {
                 )}
                 <CardContent>
                   <Typography variant='subtitle1' gutterBottom>
-                    {match.date ? new Date(match.date).toLocaleString('es-AR', {
-                      weekday: 'long',
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                      hour12: false,
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    }) : 'A confirmar'}
+                    {match.date
+                      ? new Date(match.date).toLocaleString('es-AR', {
+                          weekday: 'long',
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                          hour12: false,
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })
+                      : 'A confirmar'}
                   </Typography>
                   <Grid
                     container
@@ -309,7 +326,7 @@ const Fixture: React.FC = () => {
       <AddMatchForm
         open={addModalOpen}
         teams={teams}
-        cancelAddMatch={cancelAddMatch}
+        cancelAddMatch={() => cancelAddMatch()}
         setMessage={setMessage}
       />
       {matchToUpdate && (

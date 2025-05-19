@@ -42,15 +42,9 @@ const PositionsTable: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  // const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setSearchQuery(event.target.value);
-  // };
-
   const handleEdit = (id: string) => {
     const team = teams?.find((t) => t._id === id);
     if (team) {
-      console.log('Team to update', teamToUpdate);
-
       setTeamToUpdate(team);
       setModalOpen(true);
     }
@@ -130,35 +124,26 @@ const PositionsTable: React.FC = () => {
         >
           Tabla de Posiciones
         </Typography>
-        {error && <Alert severity='error'>{error}</Alert>}
-        {message && <Alert severity='success'>{message}</Alert>}
-
-        {/* <TextField
-          label='Buscar equipo'
-          variant='outlined'
-          size='small'
-          fullWidth
-          value={searchQuery}
-          onChange={handleSearchChange}
-          sx={{
-            mb: 2,
-            input: { color: 'white' },
-            label: { color: 'white' },
-            '& label.Mui-focused': { color: 'white' }, // label cuando está enfocado
-            '& .MuiOutlinedInput-root': {
-              '& fieldset': {
-                borderColor: '#d4d8da', // borde por defecto
-              },
-              '&:hover fieldset': {
-                borderColor: 'white', // borde al hacer hover
-              },
-              '&.Mui-focused fieldset': {
-                borderColor: 'white', // borde cuando está enfocado
-              },
-            },
-          }}
-        /> */}
-
+        {error && (
+          <Box display='flex' justifyContent='center' mb={2}>
+            <Alert
+              severity='error'
+              sx={{ maxWidth: 400, width: 'fit-content' }}
+            >
+              {error}
+            </Alert>
+          </Box>
+        )}
+        {message && (
+          <Box display='flex' justifyContent='center' mb={2}>
+            <Alert
+              severity='success'
+              sx={{ maxWidth: 400, width: 'fit-content' }}
+            >
+              {message}
+            </Alert>
+          </Box>
+        )}
         <Table size={isMobile ? 'small' : 'medium'}>
           <TableHead>
             <TableRow>

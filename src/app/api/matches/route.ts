@@ -9,7 +9,6 @@ export async function GET() {
     const matches = await loadMatches();
     return NextResponse.json(matches);
   } catch (error) {
-    console.error(error);
     if (error instanceof Error) {
       return NextResponse.json(error.message, { status: 400 });
     }
@@ -34,7 +33,6 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(newMatch);
   } catch (error) {
-    console.error(error);
     if (error instanceof ZodError) {
       return NextResponse.json(error.issues, { status: 400 });
     }

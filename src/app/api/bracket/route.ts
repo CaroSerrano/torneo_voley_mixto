@@ -9,7 +9,6 @@ export async function GET() {
     const brackets = await loadBracket();
     return NextResponse.json(brackets);
   } catch (error) {
-    console.error(error);
     if (error instanceof Error) {
       return NextResponse.json(error.message, { status: 400 });
     }
@@ -32,7 +31,6 @@ export async function POST(req: NextRequest) {
     const newBracket = await addBracket(parsedData);
     return NextResponse.json(newBracket);
   } catch (error) {
-    console.error(error);
     if (error instanceof ZodError) {
       return NextResponse.json(error.issues, { status: 400 });
     }

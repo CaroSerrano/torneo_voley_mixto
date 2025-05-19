@@ -49,10 +49,8 @@ const UpdateMatchForm: React.FC<UpdateMatchFormProps> = ({
   const { updateMatch } = useMatches();
 
   const onSubmit = async (data: FormData) => {
-    console.log('Antes de transformar:', data);
     try {
       const payload = { ...data, date: new Date(data.date) };
-      console.log('Después de transformar:', payload);
       await updateMatch(match._id, payload);
       setMessage('Partido actualizado correctamente');
       cancelUpdate();

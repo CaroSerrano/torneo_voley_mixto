@@ -24,7 +24,6 @@ export async function DELETE(
     await deleteChampion(championId);
     return NextResponse.json('Campeón eliminado correctamente');
   } catch (error) {
-    console.error(error);
     if (error instanceof Error) {
       return NextResponse.json(error.message, { status: 400 });
     }
@@ -51,7 +50,6 @@ export async function PATCH(
     const updatedChampion = await updateChampion(championId, parsedData);
     return NextResponse.json(updatedChampion);
   } catch (error) {
-    console.error(error);
     if (error instanceof ZodError) {
       return NextResponse.json(error.issues, { status: 400 });
     }

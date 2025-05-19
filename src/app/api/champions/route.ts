@@ -12,7 +12,6 @@ export async function GET() {
     const champions = await loadChampions();
     return NextResponse.json(champions);
   } catch (error) {
-    console.error(error);
     if (error instanceof Error) {
       return NextResponse.json(error.message, { status: 400 });
     }
@@ -32,12 +31,9 @@ export async function POST(req: NextRequest) {
     }
     const data = await req.json();
     const parsedData = createChampionDataDto.parse(data);
-    const newChampion = await addChampion(parsedData);
-    console.log(newChampion);
-    
+    const newChampion = await addChampion(parsedData);    
     return NextResponse.json(newChampion);
   } catch (error) {
-    console.error(error);
     if (error instanceof ZodError) {
       return NextResponse.json(error.issues, { status: 400 });
     }
