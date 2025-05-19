@@ -1,18 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { loadUsers, addUser, getUser } from '@/features/users/user.service';
 import { createUserDataDto } from '@/features/users/validations';
-import { ZodError } from 'zod';
 import { createHash } from '@/utils/auth';
+import { handleError } from '@/utils/errors/errorHandler';
+import { ValidationError } from '@/utils/errors/customErrors';
 
 export async function GET() {
   try {
     const users = await loadUsers();
     return NextResponse.json(users);
   } catch (error) {
-    if (error instanceof Error) {
-      return NextResponse.json(error.message, { status: 400 });
-    }
-    return NextResponse.json(error, { status: 400 });
+    return handleError(error)
   }
 }
 
@@ -22,7 +20,7 @@ export async function POST(req: NextRequest) {
     const validatedData = createUserDataDto.parse(userData);
     const userFound = await getUser({ email: validatedData.email });
     if (userFound) {
-      return NextResponse.json('Email already exists', { status: 400 });
+      throw new ValidationError('Email already exists');
     }
     const hashedPass = await createHash(validatedData.password);
     const withHashedPass = {
@@ -31,18 +29,12 @@ export async function POST(req: NextRequest) {
     };
     const newUser = await addUser(withHashedPass);
     if (!newUser) {
-      return NextResponse.json('Error al crear el usuario', { status: 400 });
+      throw new ValidationError('Error al crear el usuario');
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...userWithoutPassword } = newUser;
     return NextResponse.json(userWithoutPassword);
   } catch (error) {
-    if (error instanceof ZodError) {
-      return NextResponse.json(error.issues, { status: 400 });
-    }
-    if (error instanceof Error) {
-      return NextResponse.json(error.message, { status: 400 });
-    }
-    return NextResponse.json(error, { status: 400 });
+    return handleError(error)
   }
 }

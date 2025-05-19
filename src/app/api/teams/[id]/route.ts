@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { deleteTeam, updateTeam } from '@/features/teams/team.service';
 import { updateTeamDataDto } from '@/features/teams/validations';
-import { ZodError } from 'zod';
 import { auth } from '@/app/auth';
+import { handleError } from '@/utils/errors/errorHandler';
+import { UnauthorizedError } from '@/utils/errors/customErrors';
 
 export async function DELETE(
   req: NextRequest,
@@ -12,19 +13,13 @@ export async function DELETE(
     const session = await auth();
 
     if (!session) {
-      return NextResponse.json(
-        { message: 'You must be logged in.' },
-        { status: 401 }
-      );
+      throw new UnauthorizedError('Debes estar logueado');
     }
     const { id: teamId } = await params;
     await deleteTeam(teamId);
     return NextResponse.json('Equipo eliminado correctamente');
   } catch (error) {
-    if (error instanceof Error) {
-      return NextResponse.json(error.message, { status: 400 });
-    }
-    return NextResponse.json(error, { status: 500 });
+    return handleError(error);
   }
 }
 
@@ -36,10 +31,7 @@ export async function PATCH(
     const session = await auth();
 
     if (!session) {
-      return NextResponse.json(
-        { message: 'You must be logged in.' },
-        { status: 401 }
-      );
+      throw new UnauthorizedError('Debes estar logueado');
     }
     const { id: teamId } = await params;
     const teamData = await req.json();
@@ -47,12 +39,6 @@ export async function PATCH(
     const updatedTeam = await updateTeam(teamId, parsedData);
     return NextResponse.json(updatedTeam);
   } catch (error) {
-    if (error instanceof ZodError) {
-      return NextResponse.json(error.issues, { status: 400 });
-    }
-    if (error instanceof Error) {
-      return NextResponse.json(error.message, { status: 400 });
-    }
-    return NextResponse.json(error, { status: 500 });
+    return handleError(error);
   }
 }

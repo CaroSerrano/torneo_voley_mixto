@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { deleteBracket, updateBracket } from '@/features/bracket/bracket.service';
-import { ZodError } from 'zod';
+import {
+  deleteBracket,
+  updateBracket,
+} from '@/features/bracket/bracket.service';
 import { updateBracketDataDto } from '@/features/bracket/validations';
 import { auth } from '@/app/auth';
+import { handleError } from '@/utils/errors/errorHandler';
+import { UnauthorizedError } from '@/utils/errors/customErrors';
 
 export async function DELETE(
   req: NextRequest,
@@ -12,19 +16,13 @@ export async function DELETE(
     const session = await auth();
 
     if (!session) {
-      return NextResponse.json(
-        { message: 'You must be logged in.' },
-        { status: 401 }
-      );
+      throw new UnauthorizedError('Debes estar logueado')
     }
     const { id: bracketId } = await params;
     await deleteBracket(bracketId);
     return NextResponse.json('Llave eliminada correctamente');
   } catch (error) {
-    if (error instanceof Error) {
-      return NextResponse.json(error.message, { status: 400 });
-    }
-    return NextResponse.json(error, { status: 500 });
+    return handleError(error);
   }
 }
 
@@ -36,10 +34,7 @@ export async function PATCH(
     const session = await auth();
 
     if (!session) {
-      return NextResponse.json(
-        { message: 'You must be logged in.' },
-        { status: 401 }
-      );
+      throw new UnauthorizedError('Debes estar logueado')
     }
     const { id: bracketId } = await params;
     const bracketData = await req.json();
@@ -47,12 +42,6 @@ export async function PATCH(
     const updatedBracket = await updateBracket(bracketId, parsedData);
     return NextResponse.json(updatedBracket);
   } catch (error) {
-    if (error instanceof ZodError) {
-      return NextResponse.json(error.issues, { status: 400 });
-    }
-    if (error instanceof Error) {
-      return NextResponse.json(error.message, { status: 400 });
-    }
-    return NextResponse.json(error, { status: 500 });
+    return handleError(error);
   }
 }
