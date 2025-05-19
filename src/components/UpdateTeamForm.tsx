@@ -38,6 +38,7 @@ const UpdateTeamForm: React.FC<UpdateTeamFormProps> = ({
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<FormData>({
     defaultValues: {
       name: team.name,
@@ -57,6 +58,7 @@ const UpdateTeamForm: React.FC<UpdateTeamFormProps> = ({
       setTimeout(() => {
         setMessage(null);
       }, 3000);
+      reset();
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);
@@ -117,7 +119,10 @@ const UpdateTeamForm: React.FC<UpdateTeamFormProps> = ({
 
           <DialogActions>
             <Button
-              onClick={cancelUpdate}
+              onClick={() => {
+                cancelUpdate();
+                reset();
+              }}
               variant='contained'
               color='secondary'
             >

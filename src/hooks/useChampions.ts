@@ -1,4 +1,5 @@
-import { ReturnedChampion, Champions } from '@/features/champions/types';
+import { ReturnedChampion, IChampions } from '@/features/champions/types';
+import { UpdateChampionData } from '@/features/champions/validations';
 import fetcher from '@/utils/fetcher';
 import useSWR from 'swr';
 
@@ -13,7 +14,7 @@ function useChampions() {
     }
   );
 
-  const createChampion = async (newChampion: Champions) => {
+  const createChampion = async (newChampion: IChampions) => {
     try {
       const res = await fetch(endpoint, {
         method: 'POST',
@@ -30,7 +31,7 @@ function useChampions() {
 
   const updateChampion = async (
     id: string,
-    updatedData: Partial<Champions>
+    updatedData: UpdateChampionData
   ) => {
     try {
       const res = await fetch(`${endpoint}/${id}`, {

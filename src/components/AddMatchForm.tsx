@@ -58,8 +58,6 @@ const AddMatchForm: React.FC<AddMatchFormProps> = ({
     },
   });
   const [error, setError] = useState<string | null>(null);
-  // const [teamA, setTeamA] = useState<string>('');
-  // const [teamB, setTeamB] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { createMatch } = useMatches();
 
@@ -92,8 +90,6 @@ const AddMatchForm: React.FC<AddMatchFormProps> = ({
         }, 3000);
       }
     }
-    // setTeamA('');
-    // setTeamB('');
     cancelAddMatch();
   };
 

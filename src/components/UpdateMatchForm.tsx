@@ -37,6 +37,7 @@ const UpdateMatchForm: React.FC<UpdateMatchFormProps> = ({
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<FormData>({
     defaultValues: {
       teamAscore: match.teamAscore,
@@ -55,6 +56,7 @@ const UpdateMatchForm: React.FC<UpdateMatchFormProps> = ({
       await updateMatch(match._id, payload);
       setMessage('Partido actualizado correctamente');
       cancelUpdate();
+      reset();
       setTimeout(() => {
         setMessage(null);
       }, 3000);
@@ -67,6 +69,7 @@ const UpdateMatchForm: React.FC<UpdateMatchFormProps> = ({
       }
     }
     cancelUpdate();
+    reset();
   };
 
   return (
@@ -115,7 +118,10 @@ const UpdateMatchForm: React.FC<UpdateMatchFormProps> = ({
             <Button
               color='secondary'
               variant='contained'
-              onClick={cancelUpdate}
+              onClick={() => {
+                cancelUpdate();
+                reset();
+              }}
             >
               Cancelar
             </Button>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import {
   Alert,
   Box,
@@ -14,7 +14,7 @@ import {
   TextField,
 } from '@mui/material';
 import { ReturnedTeam } from '@/features/teams/types';
-import { Tournament } from '@/features/champions/types';
+import { IChampions } from '@/features/champions/types';
 import useChampions from '@/hooks/useChampions';
 
 interface AddChampionFormProps {
@@ -23,29 +23,22 @@ interface AddChampionFormProps {
   teams: ReturnedTeam[] | undefined;
 }
 
-interface FormData {
-  team: string;
-  tournament: Tournament;
-  year: number;
-}
-
 const AddChampionForm: React.FC<AddChampionFormProps> = ({
   cancelAddChampion,
   setMessage,
   teams,
 }) => {
   const {
-    register,
+    control,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>();
+    reset,
+  } = useForm<IChampions>();
   const [error, setError] = useState<string | null>(null);
-  const [team, setTeam] = useState<string>('');
-  const [tournament, setTournament] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { createChampion } = useChampions();
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (data: IChampions) => {
     console.log(data);
     try {
       setIsLoading(true);
@@ -55,6 +48,7 @@ const AddChampionForm: React.FC<AddChampionFormProps> = ({
       setTimeout(() => {
         setMessage(null);
       }, 3000);
+      reset(); // limpia el formulario
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);
@@ -63,6 +57,11 @@ const AddChampionForm: React.FC<AddChampionFormProps> = ({
         }, 3000);
       }
     }
+    cancelAddChampion();
+  };
+
+  const handleCancel = () => {
+    reset(); // limpia el formulario
     cancelAddChampion();
   };
   if (!teams) {
@@ -77,53 +76,83 @@ const AddChampionForm: React.FC<AddChampionFormProps> = ({
       </Container>
       <Box component='form' onSubmit={handleSubmit(onSubmit)} noValidate>
         <InputLabel id='team-select-label'>Equipo</InputLabel>
-        <Select
-          fullWidth
-          labelId='team-select-label'
-          {...register('team')}
-          error={!!errors.team}
-          value={team}
-          onChange={(e) => setTeam(e.target.value)}
-          MenuProps={{
-            slotProps: { paper: { sx: { backgroundColor: '#00313e' } } },
-          }}
-        >
-          {teams.map((t) => (
-            <MenuItem value={t._id} key={t._id}>
-              {t.name}
-            </MenuItem>
-          ))}
-        </Select>
+        <Controller
+          name='team'
+          control={control}
+          rules={{ required: 'El equipo es obligatorio' }}
+          render={({ field }) => (
+            <Select
+              {...field}
+              fullWidth
+              labelId='team-select-label'
+              error={!!errors.team}
+              MenuProps={{
+                slotProps: {
+                  paper: { sx: { backgroundColor: '#00313e' } },
+                },
+              }}
+            >
+              {teams.map((t) => (
+                <MenuItem key={t._id} value={t._id}>
+                  {t.name}
+                </MenuItem>
+              ))}
+            </Select>
+          )}
+        />
+        {errors.team && <p style={{ color: 'red' }}>{errors.team.message}</p>}
         <InputLabel id='tournament-select-label'>Torneo</InputLabel>
-        <Select
-          labelId='tournament-select-label'
-          fullWidth
-          {...register('tournament')}
-          error={!!errors.tournament}
-          value={tournament}
-          onChange={(e) => setTournament(e.target.value)}
-          MenuProps={{
-            slotProps: { paper: { sx: { backgroundColor: '#00313e' } } },
-          }}
-        >
-          <MenuItem value={'Apertura'}>Apertura</MenuItem>
-          <MenuItem value={'Clausura'}>Clausura</MenuItem>
-        </Select>
+        <Controller
+          name='tournament'
+          control={control}
+          rules={{ required: 'El torneo es obligatorio' }}
+          render={({ field }) => (
+            <Select
+              {...field}
+              fullWidth
+              labelId='tournament-select-label'
+              error={!!errors.tournament}
+              MenuProps={{
+                slotProps: {
+                  paper: { sx: { backgroundColor: '#00313e' } },
+                },
+              }}
+            >
+              <MenuItem value='Apertura'>Apertura</MenuItem>
+              <MenuItem value='Clausura'>Clausura</MenuItem>
+            </Select>
+          )}
+        />
+        {errors.tournament && (
+          <p style={{ color: 'red' }}>{errors.tournament.message}</p>
+        )}
         <InputLabel id='year-label'>Año</InputLabel>
-        <TextField
-          type='number'
-          fullWidth
-          margin='normal'
-          {...register('year', {
-            valueAsNumber: true,
-          })}
-          error={!!errors.year}
-          helperText={errors.year?.message}
+        <Controller
+          name='year'
+          control={control}
+          rules={{
+            required: 'El año es obligatorio',
+            min: { value: 1900, message: 'El año debe ser mayor a 1900' },
+            max: {
+              value: new Date().getFullYear(),
+              message: 'El año no puede ser futuro',
+            },
+          }}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              type='number'
+              fullWidth
+              margin='normal'
+              error={!!errors.year}
+              helperText={errors.year?.message}
+            />
+          )}
         />
 
         <DialogActions>
           <Button
-            onClick={cancelAddChampion}
+            onClick={handleCancel}
             color='secondary'
             variant='contained'
           >
