@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { loadTeams, addTeam } from '@/features/teams/team.service';
 import { createTeamDataDto } from '@/features/teams/validations';
-import { auth } from '@/app/auth';
+// import { auth } from '@/app/auth';
+// import { UnauthorizedError } from '@/utils/errors/customErrors';
 import { handleError } from '@/utils/errors/errorHandler';
-import { UnauthorizedError } from '@/utils/errors/customErrors';
 
 export async function GET() {
   try {
@@ -16,11 +16,11 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await auth();
+    // const session = await auth();
 
-    if (!session) {
-      throw new UnauthorizedError('Debes estar logueado');
-    }
+    // if (!session) {
+    //   throw new UnauthorizedError('Debes estar logueado');
+    // }
     const teamData = await req.json();
     const parsedData = createTeamDataDto.parse(teamData);
     const newTeam = await addTeam(parsedData);

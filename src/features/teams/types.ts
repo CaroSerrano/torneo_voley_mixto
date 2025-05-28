@@ -6,6 +6,7 @@ export interface ITeam {
   name: string;
   score: number;
   badge?: string;
+  matchesPlayed: number;
   status: Status;
   createdAt: string;
   updatedAt: string;

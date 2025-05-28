@@ -156,6 +156,9 @@ const PositionsTable: React.FC = () => {
               <TableCell>
                 <strong>Puntaje</strong>
               </TableCell>
+              <TableCell>
+                <strong>Partidos jugados</strong>
+              </TableCell>
               {isLoggedIn && (
                 <TableCell>
                   <strong>Acciones</strong>
@@ -179,7 +182,8 @@ const PositionsTable: React.FC = () => {
                     <span>{team.name}</span>
                   </Box>
                 </TableCell>
-                <TableCell sx={{ color: 'white' }}>{team.score}</TableCell>
+                <TableCell >{team.score}</TableCell>
+                <TableCell >{team.matchesPlayed}</TableCell>
                 {isLoggedIn && (
                   <TableCell>
                     <IconButton

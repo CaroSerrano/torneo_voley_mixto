@@ -7,7 +7,7 @@ import { Champion } from '@/models/Champion';
 
 export async function loadTeams(): Promise<ReturnedTeam[]> {
   await connectDB();
-  const teams = await Team.find().sort({ score: -1, name: 1 });
+  const teams = await Team.find().sort({ score: -1, matchesPlayed: 1 });
   return teams;
 }
 

@@ -25,6 +25,7 @@ interface UpdateTeamFormProps {
 interface FormData {
   name: string;
   score: number;
+  matchesPlayed?: number;
   status?: Status;
 }
 
@@ -43,6 +44,7 @@ const UpdateTeamForm: React.FC<UpdateTeamFormProps> = ({
     defaultValues: {
       name: team.name,
       score: team.score,
+      matchesPlayed: team.matchesPlayed,
       status: team.status,
     },
   });
@@ -97,6 +99,17 @@ const UpdateTeamForm: React.FC<UpdateTeamFormProps> = ({
             fullWidth
             margin='normal'
             {...register('score', {
+              valueAsNumber: true,
+            })}
+            error={!!errors.score}
+            helperText={errors.score?.message}
+          />
+          <TextField
+            label='Partidos jugados'
+            type='number'
+            fullWidth
+            margin='normal'
+            {...register('matchesPlayed', {
               valueAsNumber: true,
             })}
             error={!!errors.score}
