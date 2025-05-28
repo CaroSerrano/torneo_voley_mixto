@@ -148,16 +148,16 @@ const PositionsTable: React.FC = () => {
           <TableHead>
             <TableRow>
               <TableCell>
-                <strong>Posición</strong>
+                <strong>{isMobile ? 'POS' : 'Posición'}</strong>
               </TableCell>
               <TableCell>
                 <strong>Equipo</strong>
               </TableCell>
               <TableCell>
-                <strong>Puntaje</strong>
+                <strong>{isMobile ? 'PTS' : 'Puntos'}</strong>
               </TableCell>
               <TableCell>
-                <strong>Partidos jugados</strong>
+                <strong>{isMobile ? 'PJ' : 'Partidos jugados'}</strong>
               </TableCell>
               {isLoggedIn && (
                 <TableCell>
@@ -169,7 +169,7 @@ const PositionsTable: React.FC = () => {
           <TableBody>
             {filteredTeams.map((team, index) => (
               <TableRow key={team._id}>
-                <TableCell>{index + 1}</TableCell>
+                <TableCell align='center'>{index + 1}</TableCell>
                 <TableCell>
                   <Box display='flex' alignItems='center' gap={1}>
                     <Avatar
@@ -182,8 +182,8 @@ const PositionsTable: React.FC = () => {
                     <span>{team.name}</span>
                   </Box>
                 </TableCell>
-                <TableCell >{team.score}</TableCell>
-                <TableCell >{team.matchesPlayed}</TableCell>
+                <TableCell align='center'>{team.score}</TableCell>
+                <TableCell align='center'>{team.matchesPlayed}</TableCell>
                 {isLoggedIn && (
                   <TableCell>
                     <IconButton
