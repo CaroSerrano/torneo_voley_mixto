@@ -33,7 +33,6 @@ This app was born from a real need: my partner plays on a volleyball team whose 
 - 📊 **Live standings table**, automatically updated based on match results.
 - 📅 **Fixture by date and team**.
 - 🏆 **Champions list** with historical winners.
-- ⭐ **Best team of the year**, based on performance stats.
 - 🔐 **Admin access** to manage:
   - Teams
   - Matches

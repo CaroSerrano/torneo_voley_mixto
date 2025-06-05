@@ -33,7 +33,6 @@ La idea surgió de una necesidad concreta: mi pareja juega en un equipo de vóle
 - 📊 **Tabla de posiciones** actualizada automáticamente según los resultados cargados.
 - 📅 **Fixture** por fecha y por equipos.
 - 🏆 **Tabla de campeones** con los ganadores históricos del torneo.
-- ⭐ **Mejor equipo del año** según estadísticas.
 - 🔐 **Autenticación** para permitir que el administrador edite:
   - Equipos
   - Partidos
