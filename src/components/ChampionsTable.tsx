@@ -1,3 +1,4 @@
+'use client'
 import { ReturnedChampion } from '@/features/champions/types';
 import useChampions from '@/hooks/useChampions';
 import { useSession } from 'next-auth/react';

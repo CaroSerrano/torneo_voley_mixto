@@ -1,4 +1,3 @@
-'use client';
 import ChampionsTable from '@/components/ChampionsTable';
 
 const ChampionsPage: React.FC = () => {

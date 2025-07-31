@@ -1,4 +1,4 @@
-import { Schema, model, models } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import { ITeam, Status } from '@/features/teams/types';
 
 export const teamSchema = new Schema<ITeam>(
@@ -12,4 +12,4 @@ export const teamSchema = new Schema<ITeam>(
   { timestamps: true }
 );
 
-export default models.Team || model<ITeam>('Team', teamSchema);
+export const Team = mongoose.models.Team || mongoose.model<ITeam>('Team', teamSchema);

@@ -50,7 +50,7 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <Paper elevation={3} sx={{ maxWidth: 400, mx: 'auto', mt: 20, p: 4, backgroundColor:'#00313e' }}>
+    <Paper elevation={3} sx={{ maxWidth: 400, mx: 'auto', my: 20, p: 4, backgroundColor:'#00313e' }}>
       {error && <Alert severity='error'>{error}</Alert>}
       <Typography variant='h5' color='primary.contrastText' component='h1' gutterBottom align='center'>
         Iniciar Sesión

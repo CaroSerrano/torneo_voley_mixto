@@ -1,3 +1,4 @@
+'use client'
 import useTeams from '@/hooks/useTeams';
 import {
   Alert,
@@ -230,7 +231,7 @@ function Bracket() {
               backgroundColor: '#9b7b1b',
             }}
           >
-            Ganador
+            Campeón
           </Typography>
           {renderSelect(14, 3)}
         </Box>

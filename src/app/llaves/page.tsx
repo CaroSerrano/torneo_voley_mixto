@@ -1,4 +1,3 @@
-'use client';
 import Bracket from '@/components/Bracket';
 
 const BracketPage: React.FC = () => {

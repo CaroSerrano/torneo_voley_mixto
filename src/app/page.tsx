@@ -1,6 +1,6 @@
 'use client';
 
-import PositionsPage from './positions/page';
+import PositionsPage from './posiciones/page';
 import FixturePage from './fixture/page';
 
 export default function Home() {

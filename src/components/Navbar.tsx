@@ -30,8 +30,8 @@ const Navbar = () => {
 
   const menuItems = [
     { label: 'Inicio', href: '/' },
-    { label: 'Campeones', href: '/champions' },
-    { label: 'Llaves', href: '/bracket' },
+    { label: 'Campeones', href: '/campeones' },
+    { label: 'Llaves', href: '/llaves' },
     !isLoggedIn
       ? { label: 'Iniciar sesión', href: '/login' }
       : { label: 'Cerrar sesión', action: () => signOut() },
