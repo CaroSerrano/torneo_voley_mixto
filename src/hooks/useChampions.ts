@@ -1,4 +1,5 @@
-import { ReturnedChampion, IChampions } from '@/features/champions/types';
+import { ReturnedChampion } from '@/features/champions/types';
+import { IForm } from '@/components/AddChampionForm'
 import { UpdateChampionData } from '@/features/champions/validations';
 import fetcher from '@/utils/fetcher';
 import useSWR from 'swr';
@@ -14,7 +15,7 @@ function useChampions() {
     }
   );
 
-  const createChampion = async (newChampion: IChampions) => {
+  const createChampion = async (newChampion: IForm) => {
       const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

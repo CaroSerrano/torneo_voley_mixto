@@ -134,7 +134,7 @@ const ChampionsTable: React.FC = () => {
           backgroundColor: '#00313e',
           maxWidth: isMobile ? '100%' : 700,
           margin: 'auto',
-          mt: 20,
+          my: 20,
           p: isMobile ? 1 : 2,
           boxShadow: '0 4px 12px rgba(255, 255, 255, 0.1)',
           overflowX: 'auto',

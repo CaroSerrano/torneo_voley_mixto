@@ -1,4 +1,5 @@
 import { connectDB } from '@/utils/mongoose';
+import '@/models';
 import { Match } from '@/models/Match';
 import { CreatedMatch, ReturnedMatch } from './types';
 import { CreateMatchData, UpdateMatchData } from './validations';

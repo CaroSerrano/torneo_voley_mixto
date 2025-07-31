@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import {
@@ -15,9 +15,13 @@ import {
   TextField,
 } from '@mui/material';
 import { ReturnedTeam } from '@/features/teams/types';
-import { IChampions } from '@/features/champions/types';
+// import { IChampions } from '@/features/champions/types';
 import useChampions from '@/hooks/useChampions';
-
+export interface IForm {
+  team: string;
+  tournament: string;
+  year: number;
+}
 interface AddChampionFormProps {
   cancelAddChampion: () => void;
   setMessage: (message: string | null) => void;
@@ -34,12 +38,18 @@ const AddChampionForm: React.FC<AddChampionFormProps> = ({
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<IChampions>();
+  } = useForm<IForm>({
+    defaultValues: {
+      team: '',
+      tournament: '',
+      year: new Date().getFullYear(),
+    },
+  });
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { createChampion } = useChampions();
 
-  const onSubmit = async (data: IChampions) => {
+  const onSubmit = async (data: IForm) => {
     try {
       setIsLoading(true);
       createChampion(data);
@@ -151,11 +161,7 @@ const AddChampionForm: React.FC<AddChampionFormProps> = ({
         />
 
         <DialogActions>
-          <Button
-            onClick={handleCancel}
-            color='secondary'
-            variant='contained'
-          >
+          <Button onClick={handleCancel} color='secondary' variant='contained'>
             Cancelar
           </Button>
           <Button type='submit' color='success' variant='contained'>

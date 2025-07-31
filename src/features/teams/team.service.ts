@@ -1,4 +1,5 @@
 import { connectDB } from '@/utils/mongoose';
+import '@/models';
 import { Team } from '@/models/Team';
 import { ReturnedTeam } from '@/features/teams/types';
 import { CreateTeamData, UpdateTeamData } from '@/features/teams/validations';

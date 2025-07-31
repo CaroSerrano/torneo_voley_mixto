@@ -1,4 +1,5 @@
 import { connectDB } from '@/utils/mongoose';
+import '@/models';
 import Bracket from '@/models/Bracket';
 import { ReturnedBracket } from './types';
 import { CreateBracketData, UpdateBracketData } from './validations';

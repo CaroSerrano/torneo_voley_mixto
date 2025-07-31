@@ -1,4 +1,5 @@
 import { connectDB } from '@/utils/mongoose';
+import '@/models'; 
 import { Champion } from '@/models/Champion';
 import { ReturnedChampion } from './types';
 import { CreateChampionData, UpdateChampionData } from './validations';

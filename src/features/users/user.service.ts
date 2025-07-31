@@ -1,4 +1,5 @@
 import { connectDB } from '@/utils/mongoose';
+import '@/models';
 import { User } from '@/models/User';
 import { ReturnedUser } from './types';
 import { CreateUserData, UpdateUserData } from './validations';

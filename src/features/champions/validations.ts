@@ -5,7 +5,7 @@ import { zObjectId } from '../matches/validations';
 export const createChampionDataDto = z.object({
   team: zObjectId,
   tournament: z.nativeEnum(Tournament),
-  year: z.number().min(1900).max(new Date().getFullYear()),
+  year: z.coerce.number().min(1900).max(new Date().getFullYear()),
 });
 
 export type CreateChampionData = z.infer<typeof createChampionDataDto>;
