@@ -61,20 +61,6 @@ const eventData = {
       addressCountry: 'AR',
     },
   },
-  areaServed: [
-    {
-      '@type': 'City',
-      name: 'La Plata',
-    },
-    {
-      '@type': 'City',
-      name: 'Ensenada',
-    },
-    {
-      '@type': 'City',
-      name: 'Berisso',
-    },
-  ],
   url: host,
 };
 
