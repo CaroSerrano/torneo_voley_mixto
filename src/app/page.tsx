@@ -1,5 +1,3 @@
-'use client';
-
 import PositionsPage from './posiciones/page';
 import FixturePage from './fixture/page';
 
