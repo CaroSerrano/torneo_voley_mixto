@@ -49,6 +49,7 @@ const eventData = {
   '@context': 'https://schema.org',
   '@type': 'SportsEvent',
   name: 'Torneo Voley Mixto de La Plata',
+  startDate: '2025-04-27T13:00:00Z',
   description:
     'WebApp para visualizar posiciones, fechas y campeones del torneo de voley mixto de la ciudad de La Plata',
   sport: 'Volleyball',
