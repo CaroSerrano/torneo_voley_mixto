@@ -21,7 +21,7 @@ const Footer = () => {
         <Typography variant='body2' color='textSecondary'>
           &copy; {new Date().getFullYear()} Desarrollado por{' '}
           <MuiLink
-            href='https://www.linkedin.com/in/paula-carolina-serrano'
+            href='https://www.caroserrano.dev'
             target='_blank'
             rel='noopener noreferrer'
             underline='hover'
